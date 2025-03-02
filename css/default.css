@@ -1,14 +1,6 @@
-@font-face {
-    font-family: "hyperlegible";
-    font-weight: normal;
-    font-style: normal;
-    src: url("/fonts/Atkinson-Hyperlegible-Regular-102a.woff2") format("woff2");
-    font-display: block;
-}
-
 html {
     font-size: 62.5%;
-    font-family: hyperlegible, ui-sans-serif;
+    font-family: AtkinsonHyperlegibleNext, ui-sans-serif;
 }
 
 body {
@@ -39,6 +31,8 @@ footer {
     border-top: 0.2rem solid #000;
     font-size: 1.2rem;
     color: #555;
+    font-style: italic;
+    font-weight: 800;
 }
 
 h1 {
