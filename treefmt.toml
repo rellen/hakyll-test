@@ -1,0 +1,8 @@
+[formatter.nixfmt-rfc-style]
+command = "nixfmt"
+includes = ["*.nix"]
+
+[formatter.ormolu]
+command = "ormolu"
+options = ["--mode", "inplace"]
+includes = ["*.hs"]
