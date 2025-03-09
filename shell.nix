@@ -21,6 +21,7 @@ pkgs.mkShell rec {
       treefmt
       nixfmt-rfc-style
       ormolu
+      nodePackages.prettier
     ]
     ++ optional stdenv.isLinux inotify-tools
     ++ optionals stdenv.isDarwin (

@@ -5,4 +5,9 @@ includes = ["*.nix"]
 [formatter.ormolu]
 command = "ormolu"
 options = ["--mode", "inplace"]
-includes = ["*.hs"]
+includes = ["*.hs", "**/*.hs"]
+
+[formatter.prettier]
+command = "prettier"
+options = ["--write"]
+includes = ["*.html", "**/*.html"]

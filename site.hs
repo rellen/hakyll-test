@@ -10,9 +10,9 @@ main = hakyll $ do
   match "images/*" $ do
     route idRoute
     compile copyFileCompiler
-    
+
   match "css/*.hs" $ do
-    route   $ setExtension "css"
+    route $ setExtension "css"
     compile $ do
       css <- getResourceString >>= withItemBody (unixFilter "runghc" [])
       return $ fmap compressCss css
@@ -68,7 +68,6 @@ main = hakyll $ do
         >>= relativizeUrls
 
   match "templates/*" $ compile templateBodyCompiler
-
 
 --------------------------------------------------------------------------------
 postCtx :: Context String
