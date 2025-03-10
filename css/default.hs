@@ -43,6 +43,106 @@ generateFontCSS = do
       | (suffix, weight) <- Map.toList ahnFontWeightMap
     ]
 
+mediaQuery319 :: Css
+mediaQuery319 = do
+  query Media.screen [Media.maxWidth $ px 319] $ do
+    body ? do
+      width $ Clay.pct 90
+      margin nil nil nil nil
+      padding nil (Clay.pct 5) nil (Clay.pct 5)
+
+    header ? do
+      margin (Clay.rem 4.2) nil (Clay.rem 4.2) nil
+
+    nav ? do
+      margin nil auto (Clay.rem 3) auto
+      textAlign center
+
+    footer ?
+      textAlign center
+
+    nav ? do
+      a ? do
+        display block
+        lineHeight $ unitless 1.6
+
+    ".logo" ? do
+      margin (Clay.rem 1) auto (Clay.rem 3) auto
+      textAlign center
+
+    ".logo" ? do
+      a ? do
+        fontSizeRem 2.4
+
+
+
+mediaQuery320 :: Css
+mediaQuery320 = do
+  query Media.screen [Media.minWidth $ px 320] $ do
+    body ? do
+      width $ Clay.pct 90
+      margin nil nil nil nil
+      padding nil (Clay.pct 5) nil (Clay.pct 5)
+
+    header ? do
+      margin (Clay.rem 4.2) nil (Clay.rem 4.2) nil
+
+    nav ? do
+      margin nil auto (Clay.rem 3) auto
+      textAlign center
+
+    footer ?
+      textAlign center
+
+    nav ? do
+      a ? do
+        display inline
+        margin nil (Clay.rem 0.6) nil (Clay.rem 0.6)
+
+    ".logo" ? do
+      margin (Clay.rem 1) auto (Clay.rem 3) auto
+      textAlign center
+
+    ".logo" ? do
+      a ? do
+        fontSizeRem 2.4
+
+
+mediaQuery640 :: Css
+mediaQuery640 = do
+  query Media.screen [Media.minWidth $ px 640] $ do
+    body ? do
+      width $ Clay.rem 60
+      margin nil auto nil auto
+      padding nil nil nil nil
+
+    header ? do
+      margin nil nil (Clay.rem 3) nil
+      paddingX nil
+      paddingY $ Clay.rem 1.2
+
+    nav ? do
+      margin nil nil nil nil
+      textAlign end
+
+    nav ? do
+      a ? do
+        margin nil nil nil (Clay.rem 1.2)
+        display inline
+
+    footer ? do
+      textAlign end
+
+    ".logo" ? do
+      margin nil nil nil nil
+      textAlign start
+
+    ".logo" ? do
+      a ? do
+        float floatLeft
+        fontSizeRem 1.8
+
+
 main :: IO ()
 main = putCss $ do
   generateFontCSS
@@ -98,34 +198,6 @@ main = putCss $ do
       color "#000"
       textDecoration none
 
-  query Media.screen [Media.minWidth $ px 640] $ do
-    body ? do
-      width $ Clay.rem 60
-      margin nil auto nil auto
-      padding nil nil nil nil
-
-    header ? do
-      margin nil nil (Clay.rem 3) nil
-      paddingX nil
-      paddingY $ Clay.rem 1.2
-
-    nav ? do
-      margin nil nil nil nil
-      textAlign end
-
-    nav ? do
-      a ? do
-        margin nil nil nil (Clay.rem 1.2)
-        display inline
-
-    footer ? do
-      textAlign end
-
-    ".logo" ? do
-      margin nil nil nil nil
-      textAlign start
-
-    ".logo" ? do
-      a ? do
-        float floatLeft
-        fontSizeRem 1.8
+  mediaQuery319
+  mediaQuery320
+  mediaQuery640
