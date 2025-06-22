@@ -14,7 +14,9 @@ main = hakyll $ do
   match "css/*.hs" $ do
     route $ setExtension "css"
     compile $ do
-      css <- getResourceString >>= withItemBody (unixFilter "runghc" [])
+      item <- getUnderlying
+      let file = toFilePath item
+      css <- getResourceString >>= withItemBody (unixFilter "cabal" ["exec", "--", "runghc", file])
       return $ fmap compressCss css
 
   match "css/*.css" $ do
