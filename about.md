@@ -72,7 +72,7 @@ I am a full stack software developer with experience in generalist software deve
 
 ## Talks
 
-Talks can be found here
+Check out my [talks page](/talks.html) for recordings of various presentations
 
 ## Education
 

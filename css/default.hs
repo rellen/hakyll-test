@@ -106,10 +106,11 @@ darkModeStyles = do
     
     a ? do
       color darkPine
-      borderBottomColor darkPine
       hover & do
         color darkRose
-        borderBottomColor darkRose
+
+    ".keep-in-touch ul li a" ? do
+      textDecoration none
     
     ".logo" ? do
       a ? do
@@ -208,10 +209,22 @@ mediaQuery319 = do
     ".logo" ? mobileLogoStyle
     ".logo" ? do
       a ? mobileLogoAStyle
+      
+    ".footer-content" ? do
+      flexDirection column
+      alignItems center
+      
+    ".keep-in-touch" ? do
+      flexDirection column
+      marginBottom $ Clay.rem 1.5
+      
+    ".copyright" ? do
+      flexDirection column
+      alignItems center
 
 mediaQuery320 :: Css
 mediaQuery320 = do
-  query Media.screen [Media.minWidth $ px 320] $ do
+  query Media.screen [Media.minWidth $ px 320, Media.maxWidth $ px 639] $ do
     body ? mobileBodyStyle
     header ? mobileHeaderStyle
     nav ? mobileNavStyle
@@ -225,12 +238,24 @@ mediaQuery320 = do
     ".logo" ? mobileLogoStyle
     ".logo" ? do
       a ? mobileLogoAStyle
+      
+    ".footer-content" ? do
+      flexDirection column
+      alignItems center
+      
+    ".keep-in-touch" ? do
+      flexDirection column
+      marginBottom $ Clay.rem 1.5
+      
+    ".copyright" ? do
+      flexDirection column
+      alignItems center
 
 mediaQuery640 :: Css
 mediaQuery640 = do
   query Media.screen [Media.minWidth $ px 640] $ do
     body ? do
-      width $ Clay.rem 60
+      width $ ch 65
       margin nil auto nil auto
       padding nil nil nil nil
 
@@ -272,6 +297,10 @@ baseStyles = do
     -- Add transition for theme changes
     transition "color" (sec 0.3) ease (sec 0)
     transition "background-color" (sec 0.3) ease (sec 0)
+  
+  -- Add text justification to main content
+  "main p" ? do
+    textAlign justify
 
   header ? do
     borderBottomWidth (Clay.rem 0.2)
@@ -284,8 +313,7 @@ baseStyles = do
     a ? do
       fontSizeRem 1.8
       fontWeight bold
-      textDecoration none
-      textTransform uppercase
+      -- Removed textTransform uppercase
 
   footer ? do
     marginTop $ Clay.rem 3
@@ -294,8 +322,77 @@ baseStyles = do
     borderTopWidth (Clay.rem 0.2)
     borderTopStyle solid
     fontSizeRem 1.2
+    
+  ".footer-content" ? do
+    display flex
+    flexDirection row
+    justifyContent spaceBetween
+    alignItems baseline
+    marginBottom $ Clay.rem 2
+    
+  ".keep-in-touch" ? do
+    display flex
+    flexDirection row
+    alignItems center
+    
+    h3 ? do
+      fontSizeRem 1.4
+      marginRight $ Clay.rem 1
+      fontWeight $ weight 600
+      marginBottom nil
+    
+    ul ? do
+      listStyleType none
+      paddingLeft nil
+      display flex
+      flexDirection row
+      marginBottom nil
+      alignItems center
+      
+      li ? do
+        marginBottom nil
+        marginRight $ Clay.rem 1.5
+        display flex
+        alignItems center
+    
+    ".sr-only" ? do
+      position absolute
+      width (px 1)
+      height (px 1)
+      paddingTop nil
+      paddingRight nil
+      paddingBottom nil
+      paddingLeft nil
+      marginTop (px (-1))
+      marginRight (px (-1))
+      marginBottom (px (-1))
+      marginLeft (px (-1))
+      overflow hidden
+      clip $ rect (px 0) (px 0) (px 0) (px 0)
+      borderWidth nil
+      whiteSpace nowrap
+        
+      
+    ".social-icon" ? do
+      width $ Clay.rem 1.6
+      height $ Clay.rem 1.6
+      color inherit
+      display inlineBlock
+      verticalAlign middle
+      
+      hover & do
+        color dawnRose
+  
+  ".copyright" ? do
+    display flex
+    flexDirection row
+    alignItems baseline
     fontStyle italic
-    fontWeight $ weight 800
+    fontWeight $ weight 400
+    
+    p ? do
+      marginBottom nil
+      marginRight $ Clay.rem 1.5
 
   h1 ? do
     fontSizeRem 2.4
@@ -312,15 +409,14 @@ baseStyles = do
       fontStyle italic
 
   a ? do
-    textDecoration none
-    borderBottomWidth (px 1)
-    borderBottomStyle solid
+    textDecoration underline
+    -- Using the standard text-decoration property only
+    -- Clay 0.16.0 doesn't support newer CSS text decoration properties
 
   ".logo" ? do
     a ? do
       fontWeight bold
       textDecoration none
-      borderBottomStyle none
 
   -- Code blocks and inline code
   Clay.code ? do
@@ -405,10 +501,11 @@ lightModeStyles = do
     
     a ? do
       color dawnPine
-      borderBottomColor dawnPine
       hover & do
         color dawnRose
-        borderBottomColor dawnRose
+
+    ".keep-in-touch ul li a" ? do
+      textDecoration none
     
     ".logo" ? do
       a ? do
@@ -453,10 +550,11 @@ fallbackStyles = do
   
   a ? do
     color dawnPine
-    borderBottomColor dawnPine
     hover & do
       color dawnRose
-      borderBottomColor dawnRose
+
+  ".keep-in-touch ul li a" ? do
+    textDecoration none
   
   ".logo" ? do
     a ? do
