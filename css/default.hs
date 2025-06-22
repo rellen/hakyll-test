@@ -167,6 +167,87 @@ generateFontCSS = do
       | (suffix, weight) <- Map.toList ahnFontWeightMap
     ]
 
+-- Hamburger menu styles
+hamburgerMenuStyle :: Css
+hamburgerMenuStyle = do
+  ".nav-toggle" ? do
+    position absolute
+    opacity 0
+    left $ px (-999)
+    height $ px 0
+    width $ px 0
+    
+  ".nav-toggle-label" ? do
+    position absolute
+    top $ Clay.rem 1
+    right $ Clay.rem 1
+    display none
+    height $ Clay.rem 2.5
+    width $ Clay.rem 2.5
+    cursor pointer
+    alignItems center
+    justifyContent center
+
+  ".nav-toggle-label" ? do
+    color dawnText -- Set explicit color for light mode
+    
+  ".hamburger" ? do
+    position relative
+    width $ Clay.rem 2
+    height $ Clay.rem 0.25
+    backgroundColor dawnText -- Explicit color for light mode
+    borderRadius (px 2) (px 2) (px 2) (px 2)
+    transition "transform" (sec 0.3) ease (sec 0)
+    
+  ".hamburger:before" ? do
+    content (stringContent "")
+    position absolute
+    left nil
+    top $ Clay.rem (-0.6)
+    width $ Clay.pct 100
+    height $ Clay.rem 0.25
+    backgroundColor dawnText -- Explicit color for light mode
+    borderRadius (px 2) (px 2) (px 2) (px 2)
+    transition "top" (sec 0.3) ease (sec 0)
+    transition "transform" (sec 0.3) ease (sec 0)
+    
+  ".hamburger:after" ? do
+    content (stringContent "")
+    position absolute
+    left nil
+    bottom $ Clay.rem (-0.6)
+    width $ Clay.pct 100
+    height $ Clay.rem 0.25
+    backgroundColor dawnText -- Explicit color for light mode
+    borderRadius (px 2) (px 2) (px 2) (px 2)
+    transition "bottom" (sec 0.3) ease (sec 0)
+    transition "transform" (sec 0.3) ease (sec 0)
+    
+  -- Dark mode hamburger color
+  query Media.screen [Media.prefersColorScheme Media.dark] $ do
+    ".nav-toggle-label" ? do
+      color darkText
+      
+    ".hamburger" ? do
+      backgroundColor darkText
+      
+    ".hamburger:before" ? do
+      backgroundColor darkText
+      
+    ".hamburger:after" ? do
+      backgroundColor darkText
+  
+  ".nav-toggle:checked + .nav-toggle-label .hamburger" ? do
+    transform $ rotate (deg 45)
+    
+  ".nav-toggle:checked + .nav-toggle-label .hamburger:before" ? do
+    top nil
+    transform $ rotate (deg 90)
+    
+  ".nav-toggle:checked + .nav-toggle-label .hamburger:after" ? do
+    bottom nil
+    transform $ rotate (deg 90)
+
 -- Common styles for shared elements across media queries
 mobileBodyStyle :: Css
 mobileBodyStyle = do
@@ -197,14 +278,47 @@ mediaQuery319 :: Css
 mediaQuery319 = do
   query Media.screen [Media.maxWidth $ px 319] $ do
     body ? mobileBodyStyle
-    header ? mobileHeaderStyle
-    nav ? mobileNavStyle
+    header ? do
+      mobileHeaderStyle
+      position relative
+    
     footer ? textAlign center
+    
+    -- Mobile menu styling
+    ".nav-toggle-label" ? display flex
+    
+    nav ? do
+      position fixed
+      top $ Clay.rem 4
+      left nil
+      right nil
+      backgroundColor dawnBase
+      textAlign center
+      paddingTop $ Clay.rem 1
+      paddingBottom $ Clay.rem 1
+      transform $ translateY (px (-100))
+      opacity 0
+      visibility hidden -- Hide until checkbox is checked
+      transition "transform" (sec 0.3) ease (sec 0)
+      transition "opacity" (sec 0.3) ease (sec 0)
+      transition "visibility" (sec 0.3) ease (sec 0)
+      width $ Clay.pct 100
+      zIndex 100 -- Increased z-index to ensure menu appears above content
+    
+    ".nav-toggle:checked ~ nav" ? do
+      transform $ translateY nil
+      opacity 1
+      visibility visible
+      borderBottomStyle solid
+      borderBottomWidth (px 1)
+      borderBottomColor dawnMuted
     
     nav ? do
       a ? do
         display block
         lineHeight $ unitless 1.6
+        paddingTop $ Clay.rem 0.5
+        paddingBottom $ Clay.rem 0.5
     
     ".logo" ? mobileLogoStyle
     ".logo" ? do
@@ -221,19 +335,56 @@ mediaQuery319 = do
     ".copyright" ? do
       flexDirection column
       alignItems center
+      
+    -- Dark mode adjustments for mobile menu
+    query Media.screen [Media.prefersColorScheme Media.dark] $ do
+      nav ? backgroundColor darkBase
 
 mediaQuery320 :: Css
 mediaQuery320 = do
   query Media.screen [Media.minWidth $ px 320, Media.maxWidth $ px 639] $ do
     body ? mobileBodyStyle
-    header ? mobileHeaderStyle
-    nav ? mobileNavStyle
+    header ? do
+      mobileHeaderStyle
+      position relative
+    
     footer ? textAlign center
+    
+    -- Mobile menu styling
+    ".nav-toggle-label" ? display flex
+    
+    nav ? do
+      position fixed
+      top $ Clay.rem 4
+      left nil
+      right nil
+      backgroundColor dawnBase
+      textAlign center
+      paddingTop $ Clay.rem 1
+      paddingBottom $ Clay.rem 1
+      transform $ translateY (px (-100))
+      opacity 0
+      visibility hidden -- Hide until checkbox is checked
+      transition "transform" (sec 0.3) ease (sec 0)
+      transition "opacity" (sec 0.3) ease (sec 0)
+      transition "visibility" (sec 0.3) ease (sec 0)
+      width $ Clay.pct 100
+      zIndex 100 -- Increased z-index to ensure menu appears above content
+    
+    ".nav-toggle:checked ~ nav" ? do
+      transform $ translateY nil
+      opacity 1
+      visibility visible
+      borderBottomStyle solid
+      borderBottomWidth (px 1)
+      borderBottomColor dawnMuted
     
     nav ? do
       a ? do
-        display inline
-        margin nil (Clay.rem 0.6) nil (Clay.rem 0.6)
+        display block
+        lineHeight $ unitless 1.6
+        paddingTop $ Clay.rem 0.5
+        paddingBottom $ Clay.rem 0.5
     
     ".logo" ? mobileLogoStyle
     ".logo" ? do
@@ -250,6 +401,10 @@ mediaQuery320 = do
     ".copyright" ? do
       flexDirection column
       alignItems center
+      
+    -- Dark mode adjustments for mobile menu
+    query Media.screen [Media.prefersColorScheme Media.dark] $ do
+      nav ? backgroundColor darkBase
 
 mediaQuery640 :: Css
 mediaQuery640 = do
@@ -579,6 +734,7 @@ main = putCss $ do
   fallbackStyles -- Light theme fallback for browsers without prefers-color-scheme
   lightModeStyles -- Light theme media query
   darkModeStyles  -- Dark theme media query
+  hamburgerMenuStyle -- Hamburger menu CSS
   mediaQuery319
   mediaQuery320
   mediaQuery640
