@@ -1,0 +1,19 @@
+packages: .
+
+-- Specify that we want the latest Hakyll
+allow-newer: hakyll:*
+
+-- Define optimization level
+optimization: 2
+
+-- Package-specific flags
+package hakyll-test
+  documentation: True
+  benchmarks: True
+  tests: True
+
+-- Use v2 style Cabal commands by default
+with-compiler: /nix/store/qza2y18fwkq1wzi02qywf691r42r5jfy-ghc-9.6.6/bin/ghc
+
+-- Enable parallel builds by default (using 8 cores)
+jobs: 8
