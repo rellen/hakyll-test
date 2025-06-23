@@ -91,12 +91,12 @@ darkModeStyles = do
     
     nav ? do
       a ? do
-        color darkPine
-        hover & color darkRose
+        color darkFoam
+        hover & color darkIris
     
     footer ? do
       borderTopColor darkMuted
-      color darkMuted
+      color darkSubtle
     
     h1 ? color darkLove
     h2 ? color darkIris
@@ -105,9 +105,9 @@ darkModeStyles = do
       ".header" ? color darkSubtle
     
     a ? do
-      color darkPine
+      color darkFoam
       hover & do
-        color darkRose
+        color darkIris
 
     ".keep-in-touch ul li a" ? do
       textDecoration none
@@ -127,6 +127,17 @@ darkModeStyles = do
     table ? do
       thead ? borderBottomColor darkMuted
       td ? borderBottomColor darkMuted
+    
+    -- Focus indicators for dark mode
+    a ? do
+      focus & do
+        outline solid (px 2) darkFoam
+    
+    -- Navigation focus indicators for dark mode
+    nav ? do
+      a ? do
+        focus & do
+          outline solid (px 3) darkFoam
 
 -- Dark mode implementation is now using Clay's prefersColorScheme function
 
@@ -272,6 +283,15 @@ mobileLogoStyle = do
 mobileLogoAStyle :: Css
 mobileLogoAStyle = do
   fontSizeRem 2.4
+  display flex
+  alignItems center
+  justifyContent center
+
+mobileLogoIconStyle :: Css
+mobileLogoIconStyle = do
+  width (Clay.rem 3)
+  height (Clay.rem 3)
+  marginRight (Clay.rem 0.7)
 
 -- Media query definitions
 mediaQuery319 :: Css
@@ -323,6 +343,8 @@ mediaQuery319 = do
     ".logo" ? mobileLogoStyle
     ".logo" ? do
       a ? mobileLogoAStyle
+    
+    ".logo-icon" ? mobileLogoIconStyle
       
     ".footer-content" ? do
       flexDirection column
@@ -333,6 +355,10 @@ mediaQuery319 = do
       marginBottom $ Clay.rem 1.5
       
     ".copyright" ? do
+      flexDirection column
+      alignItems center
+      
+    ".hakyll-credit" ? do
       flexDirection column
       alignItems center
       
@@ -389,6 +415,8 @@ mediaQuery320 = do
     ".logo" ? mobileLogoStyle
     ".logo" ? do
       a ? mobileLogoAStyle
+    
+    ".logo-icon" ? mobileLogoIconStyle
       
     ".footer-content" ? do
       flexDirection column
@@ -399,6 +427,10 @@ mediaQuery320 = do
       marginBottom $ Clay.rem 1.5
       
     ".copyright" ? do
+      flexDirection column
+      alignItems center
+      
+    ".hakyll-credit" ? do
       flexDirection column
       alignItems center
       
@@ -428,7 +460,18 @@ mediaQuery640 = do
         margin nil nil nil (Clay.rem 1.2)
         display inline
 
-    footer ? textAlign end
+    -- Three-column footer layout on desktop
+    footer ? do
+      fontSizeRem 1.4
+    
+    ".footer-content" ? do
+      justifyContent spaceBetween
+    
+    ".copyright" ? do
+      textAlign center
+    
+    ".hakyll-credit" ? do
+      textAlign end
 
     ".logo" ? do
       margin nil nil nil nil
@@ -438,6 +481,11 @@ mediaQuery640 = do
       a ? do
         float floatLeft
         fontSizeRem 1.8
+    
+    ".logo-icon" ? do
+      width (Clay.rem 2.2)
+      height (Clay.rem 2.2)
+      marginRight (Clay.rem 0.5)
 
 -- Neutral/structure styles without colors (for both light and dark modes)
 baseStyles :: Css
@@ -445,17 +493,38 @@ baseStyles = do
   html ? do
     fontSize $ pct 62.5
     fontFamily ["AtkinsonHyperlegibleNext", "ui-sans-serif"] []
+    -- Force scrollbar to always be visible to prevent layout shifts
+    overflowY scroll
 
   body ? do
     fontSizeRem 1.6
     lineHeight $ unitless 1.6
-    -- Add transition for theme changes
-    transition "color" (sec 0.3) ease (sec 0)
-    transition "background-color" (sec 0.3) ease (sec 0)
+    -- Reduce flash by smoothing initial render
+    transition "color" (sec 0.1) ease (sec 0)
+    transition "background-color" (sec 0.1) ease (sec 0)
+    transition "opacity" (sec 0.1) ease (sec 0)
   
   -- Add text justification to main content
   "main p" ? do
     textAlign justify
+
+  -- Screen reader only content
+  ".sr-only" ? do
+    position absolute
+    width (px 1)
+    height (px 1)
+    paddingTop nil
+    paddingRight nil
+    paddingBottom nil
+    paddingLeft nil
+    marginTop (px (-1))
+    marginRight (px (-1))
+    marginBottom (px (-1))
+    marginLeft (px (-1))
+    overflow hidden
+    clip $ rect (px 0) (px 0) (px 0) (px 0)
+    borderWidth nil
+    whiteSpace nowrap
 
   header ? do
     borderBottomWidth (Clay.rem 0.2)
@@ -469,6 +538,11 @@ baseStyles = do
       fontSizeRem 1.8
       fontWeight bold
       -- Removed textTransform uppercase
+      
+      -- Enhanced focus for navigation links
+      focus & do
+        outline solid (px 3) transparent
+        outlineOffset (px 3)
 
   footer ? do
     marginTop $ Clay.rem 3
@@ -510,22 +584,21 @@ baseStyles = do
         display flex
         alignItems center
     
-    ".sr-only" ? do
-      position absolute
-      width (px 1)
-      height (px 1)
-      paddingTop nil
-      paddingRight nil
-      paddingBottom nil
-      paddingLeft nil
-      marginTop (px (-1))
-      marginRight (px (-1))
-      marginBottom (px (-1))
-      marginLeft (px (-1))
-      overflow hidden
-      clip $ rect (px 0) (px 0) (px 0) (px 0)
-      borderWidth nil
-      whiteSpace nowrap
+    -- Skip link that overrides sr-only when focused
+    ".skip-link" ? do
+      focus & do
+        position static
+        width auto
+        height auto
+        padding (Clay.rem 0.5) (Clay.rem 1) (Clay.rem 0.5) (Clay.rem 1)
+        margin nil nil nil nil
+        overflow visible
+        clip auto
+        whiteSpace normal
+        zIndex 1000
+        display block
+        fontWeight bold
+        textDecoration none
         
       
     ".social-icon" ? do
@@ -537,17 +610,27 @@ baseStyles = do
       
       hover & do
         color dawnRose
+    
+    -- Focus indicator for social icon parent links
+    ".keep-in-touch ul li a" ? do
+      focus & do
+        outline solid (px 2) transparent
+        outlineOffset (px 2)
+        borderRadius (px 4) (px 4) (px 4) (px 4)
   
   ".copyright" ? do
-    display flex
-    flexDirection row
-    alignItems baseline
     fontStyle italic
     fontWeight $ weight 400
     
     p ? do
       marginBottom nil
-      marginRight $ Clay.rem 1.5
+
+  ".hakyll-credit" ? do
+    fontStyle italic
+    fontWeight $ weight 400
+    
+    p ? do
+      marginBottom nil
 
   h1 ? do
     fontSizeRem 2.4
@@ -567,11 +650,30 @@ baseStyles = do
     textDecoration underline
     -- Using the standard text-decoration property only
     -- Clay 0.16.0 doesn't support newer CSS text decoration properties
+    
+    -- Focus indicator for keyboard navigation
+    focus & do
+      outline solid (px 2) transparent
+      outlineOffset (px 2)
 
   ".logo" ? do
     a ? do
       fontWeight bold
       textDecoration none
+      display flex
+      alignItems center
+      
+      -- Logo focus indicator
+      focus & do
+        outline solid (px 3) transparent
+        outlineOffset (px 3)
+        borderRadius (px 4) (px 4) (px 4) (px 4)
+  
+  ".logo-icon" ? do
+    width (Clay.rem 2)
+    height (Clay.rem 2)
+    marginRight (Clay.rem 0.5)
+    flexShrink 0
 
   -- Code blocks and inline code
   Clay.code ? do
@@ -677,6 +779,17 @@ lightModeStyles = do
     table ? do
       thead ? borderBottomColor dawnMuted
       td ? borderBottomColor dawnMuted
+    
+    -- Focus indicators for light mode
+    a ? do
+      focus & do
+        outline solid (px 2) dawnPine
+    
+    -- Navigation focus indicators for light mode
+    nav ? do
+      a ? do
+        focus & do
+          outline solid (px 3) dawnPine
 
 -- Fallback styles (light theme for browsers without prefers-color-scheme support)
 fallbackStyles :: Css
@@ -726,6 +839,17 @@ fallbackStyles = do
   table ? do
     thead ? borderBottomColor dawnMuted
     td ? borderBottomColor dawnMuted
+  
+  -- Fallback focus indicators
+  a ? do
+    focus & do
+      outline solid (px 2) dawnPine
+  
+  -- Fallback navigation focus indicators
+  nav ? do
+    a ? do
+      focus & do
+        outline solid (px 3) dawnPine
 
 main :: IO ()
 main = putCss $ do

@@ -25,6 +25,7 @@ cabal.project.local~
 .direnv
 _cache/
 _site
+_icons/
 CLAUDE.md
 
 **/.claude/settings.local.json

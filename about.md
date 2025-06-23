@@ -2,8 +2,6 @@
 title: About
 ---
 
-# Senior Full Stack Developer
-
 I am a full stack software developer with experience in generalist software development with a focus on soft real-time systems software and analytics in telecommunications and industrial control systems. I'm passionate about system reliability and performance, and employ techniques such as functional programming, type-safety, automated testing, and observability to improve software quality. I like bad puns and loud shirts.
 
 ## Skills

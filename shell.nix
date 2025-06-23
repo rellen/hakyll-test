@@ -22,6 +22,8 @@ pkgs.mkShell rec {
       nixfmt-rfc-style
       ormolu
       nodePackages.prettier
+
+      imagemagick
     ]
     ++ optional stdenv.isLinux inotify-tools
     ++ optionals stdenv.isDarwin (
