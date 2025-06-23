@@ -41,38 +41,17 @@ main = do
       route idRoute
       compile copyFileCompiler
 
-    -- Copy favicon files from _icons directory
-    match "_icons/favicon.svg" $ do
-      route $ gsubRoute "_icons/" (const "")
-      compile copyFileCompiler
-    
-    match "_icons/favicon.ico" $ do
-      route $ gsubRoute "_icons/" (const "")
-      compile copyFileCompiler
-    
-    match "_icons/favicon-*.png" $ do
-      route $ gsubRoute "_icons/" (const "")
-      compile copyFileCompiler
-    
-    match "_icons/apple-touch-icon*.png" $ do
-      route $ gsubRoute "_icons/" (const "")
-      compile copyFileCompiler
-    
-    match "_icons/android-chrome-*.png" $ do
-      route $ gsubRoute "_icons/" (const "")
-      compile copyFileCompiler
-    
-    match "_icons/mstile-*.png" $ do
-      route $ gsubRoute "_icons/" (const "")
-      compile copyFileCompiler
-    
-    match "_icons/site.webmanifest" $ do
-      route $ gsubRoute "_icons/" (const "")
-      compile copyFileCompiler
-    
-    match "_icons/browserconfig.xml" $ do
-      route $ gsubRoute "_icons/" (const "")
-      compile copyFileCompiler
+    -- Copy favicon files from _icons directory to root
+    mapM_ copyIconsToRoot 
+      [ "favicon.svg"
+      , "favicon.ico" 
+      , "favicon-*.png"
+      , "apple-touch-icon*.png"
+      , "android-chrome-*.png"
+      , "mstile-*.png"
+      , "site.webmanifest"
+      , "browserconfig.xml"
+      ]
     
     -- Copy logo to images directory
     match "_icons/logo.svg" $ do
@@ -123,6 +102,14 @@ main = do
           >>= relativizeUrls
 
     match "templates/*" $ compile templateBodyCompiler
+
+--------------------------------------------------------------------------------
+-- Helper function to copy icons from _icons/ to root
+copyIconsToRoot :: String -> Rules ()
+copyIconsToRoot pattern = do
+  match (fromGlob $ "_icons/" ++ pattern) $ do
+    route $ gsubRoute "_icons/" (const "")
+    compile copyFileCompiler
 
 --------------------------------------------------------------------------------
 -- Get copyright year string

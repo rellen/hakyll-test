@@ -4,9 +4,15 @@ module DefaultCSS where
 
 import Clay
 import qualified Clay.Media as Media
+import Clay.Stylesheet (Feature(..))
 import Data.Map (Map)
 import qualified Data.Map as Map
 import qualified Data.Text.Lazy
+
+-- Custom media feature for prefers-reduced-motion
+-- Following the same pattern as Clay's prefersColorScheme
+prefersReducedMotion :: Feature
+prefersReducedMotion = Feature "prefers-reduced-motion" (Just "reduce")
 
 -- Rose Pine color palette
 -- Dawn (Light theme)
@@ -138,6 +144,38 @@ darkModeStyles = do
       a ? do
         focus & do
           outline solid (px 3) darkFoam
+    
+    -- Close button dark mode styles
+    ".nav-close" ? do
+      color darkText
+      
+      hover & do
+        color darkLove
+      
+      focus & do
+        outline solid (px 2) darkFoam
+
+-- Reduced motion preferences
+reducedMotionStyles :: Css
+reducedMotionStyles = do
+  query Media.screen [prefersReducedMotion] $ do
+    -- Disable all transitions and animations
+    star ? do
+      transition "none" (sec 0) ease (sec 0)
+      
+    -- Disable hamburger animations
+    ".hamburger" ? do
+      transition "none" (sec 0) ease (sec 0)
+    
+    ".hamburger:before" ? do
+      transition "none" (sec 0) ease (sec 0)
+    
+    ".hamburger:after" ? do
+      transition "none" (sec 0) ease (sec 0)
+    
+    -- Disable nav menu slide animations
+    nav ? do
+      transition "none" (sec 0) ease (sec 0)
 
 -- Dark mode implementation is now using Clay's prefersColorScheme function
 
@@ -190,11 +228,11 @@ hamburgerMenuStyle = do
     
   ".nav-toggle-label" ? do
     position absolute
-    top $ Clay.rem 1
-    right $ Clay.rem 1
+    top $ Clay.rem 0.6
+    right $ Clay.rem 0.6
     display none
-    height $ Clay.rem 2.5
-    width $ Clay.rem 2.5
+    height $ Clay.rem 2.8
+    width $ Clay.rem 2.8
     cursor pointer
     alignItems center
     justifyContent center
@@ -258,6 +296,27 @@ hamburgerMenuStyle = do
   ".nav-toggle:checked + .nav-toggle-label .hamburger:after" ? do
     bottom nil
     transform $ rotate (deg 90)
+  
+  -- Close button styles
+  ".nav-close" ? do
+    display block
+    position absolute
+    top $ Clay.rem 0.3
+    right $ Clay.rem 0.3
+    fontSize $ Clay.rem 2.4
+    fontWeight bold
+    lineHeight $ unitless 1
+    padding (Clay.rem 0.8) (Clay.rem 1) (Clay.rem 0.8) (Clay.rem 1)
+    cursor pointer
+    color dawnText
+    textDecoration none
+    
+    hover & do
+      color dawnLove
+    
+    focus & do
+      outline solid (px 2) dawnPine
+      outlineOffset (px 2)
 
 -- Common styles for shared elements across media queries
 mobileBodyStyle :: Css
@@ -301,6 +360,7 @@ mediaQuery319 = do
     header ? do
       mobileHeaderStyle
       position relative
+      paddingRight $ Clay.rem 3.5
     
     footer ? textAlign center
     
@@ -314,7 +374,7 @@ mediaQuery319 = do
       right nil
       backgroundColor dawnBase
       textAlign center
-      paddingTop $ Clay.rem 1
+      paddingTop $ Clay.rem 3
       paddingBottom $ Clay.rem 1
       transform $ translateY (px (-100))
       opacity 0
@@ -373,6 +433,7 @@ mediaQuery320 = do
     header ? do
       mobileHeaderStyle
       position relative
+      paddingRight $ Clay.rem 3.5
     
     footer ? textAlign center
     
@@ -386,7 +447,7 @@ mediaQuery320 = do
       right nil
       backgroundColor dawnBase
       textAlign center
-      paddingTop $ Clay.rem 1
+      paddingTop $ Clay.rem 3
       paddingBottom $ Clay.rem 1
       transform $ translateY (px (-100))
       opacity 0
@@ -859,6 +920,7 @@ main = putCss $ do
   lightModeStyles -- Light theme media query
   darkModeStyles  -- Dark theme media query
   hamburgerMenuStyle -- Hamburger menu CSS
+  reducedMotionStyles -- Reduced motion preferences
   mediaQuery319
   mediaQuery320
   mediaQuery640
