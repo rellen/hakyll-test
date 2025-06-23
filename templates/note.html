@@ -1,0 +1,16 @@
+<article class="note">
+  <header class="note-header">
+    <h1 class="note-title">$title$</h1>
+    $if(date)$<time class="note-date" datetime="$datetime$">$date$</time>$endif$
+    $if(tags)$
+    <div class="note-tags">
+      $tags$
+    </div>
+    $endif$
+  </header>
+  <section class="note-content">$body$</section>
+</article>
+
+<nav class="breadcrumbs breadcrumbs-bottom" aria-label="Breadcrumb navigation">
+  <a href="/notes.html" class="breadcrumb-link">← Back to Notes</a>
+</nav>

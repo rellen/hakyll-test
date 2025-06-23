@@ -154,6 +154,51 @@ darkModeStyles = do
       
       focus & do
         outline solid (px 2) darkFoam
+    
+    -- Note colors for dark mode
+    ".note" ? do
+      ".note-header" ? do
+        borderBottomColor darkMuted
+      
+      ".note-title" ? do
+        color darkLove
+      
+      ".note-date" ? do
+        color darkSubtle
+      
+      ".note-tag" ? do
+        backgroundColor darkOverlay
+        color darkFoam
+    
+    -- Breadcrumb colors for dark mode
+    ".breadcrumbs" ? do
+      ".breadcrumb-link" ? do
+        color darkFoam
+        
+        hover & do
+          color darkIris
+    
+    -- Notes listing colors for dark mode
+    ".notes-list" ? do
+      ".note-listing" ? do
+        borderBottomColor darkMuted
+        
+        "h2" ? do
+          "a" ? do
+            color darkLove
+            
+            hover & do
+              color darkIris
+    
+    -- Tag cloud colors for dark mode
+    ".tag-cloud" ? do
+      "a" ? do
+        backgroundColor darkOverlay
+        color darkFoam
+        
+        hover & do
+          backgroundColor darkMuted
+          color darkText
 
 -- Reduced motion preferences
 reducedMotionStyles :: Css
@@ -707,6 +752,136 @@ baseStyles = do
       fontSizeRem 1.4
       fontStyle italic
 
+  -- Note-specific styling
+  ".note" ? do
+    marginBottom (Clay.rem 2)
+    
+    ".note-header" ? do
+      marginBottom (Clay.rem 1.5)
+      paddingBottom (Clay.rem 1)
+      borderBottomWidth (px 1)
+      borderBottomStyle solid
+    
+    ".note-title" ? do
+      fontSizeRem 2
+      marginBottom (Clay.rem 0.5)
+      fontWeight $ weight 600
+    
+    ".note-date" ? do
+      fontSizeRem 1.2
+      fontStyle italic
+      display block
+      marginBottom (Clay.rem 0.5)
+    
+    ".note-tags" ? do
+      display flex
+      "flex-wrap" -: "wrap"
+    
+    ".note-tag" ? do
+      fontSizeRem 1.1
+      paddingTop (Clay.rem 0.25)
+      paddingRight (Clay.rem 0.5)
+      paddingBottom (Clay.rem 0.25)
+      paddingLeft (Clay.rem 0.5)
+      marginRight (Clay.rem 0.5)
+      marginBottom (Clay.rem 0.5)
+      borderRadius (px 3) (px 3) (px 3) (px 3)
+      fontWeight $ weight 500
+      textDecoration none
+      display inlineBlock
+      
+      hover & do
+        textDecoration none
+        opacity 0.8
+    
+    ".note-content" ? do
+      lineHeight $ unitless 1.6
+  
+  -- Notes listing (for archive pages)
+  ".notes-list" ? do
+    marginTop (Clay.rem 2)
+    
+    ".note-listing" ? do
+      marginBottom (Clay.rem 2)
+      paddingBottom (Clay.rem 1.5)
+      borderBottomWidth (px 1)
+      borderBottomStyle solid
+      
+      "h2" ? do
+        marginBottom (Clay.rem 0.5)
+        fontSizeRem 1.8
+        
+        "a" ? do
+          textDecoration none
+          
+          hover & do
+            textDecoration underline
+      
+      ".note-date" ? do
+        fontSize (Clay.rem 1.2)
+        fontStyle italic
+        display block
+        marginBottom (Clay.rem 0.5)
+      
+      ".note-tags" ? do
+        marginTop (Clay.rem 0.5)
+  
+  -- Tag cloud styling
+  ".tag-cloud" ? do
+    marginTop (Clay.rem 2)
+    marginBottom (Clay.rem 3)
+    textAlign center
+    lineHeight $ unitless 1.8
+    
+    "nav" ? do
+      display block
+      
+    ".tag-list" ? do
+      listStyleType none
+      paddingLeft nil
+      display flex
+      "flex-wrap" -: "wrap"
+      justifyContent center
+      alignItems center
+      marginBottom nil
+      
+      "li" ? do
+        display inlineBlock
+        marginBottom nil
+    
+    "a" ? do
+      display inlineBlock
+      margin (Clay.rem 0.3) (Clay.rem 0.5) (Clay.rem 0.3) (Clay.rem 0.5)
+      padding (Clay.rem 0.4) (Clay.rem 0.8) (Clay.rem 0.4) (Clay.rem 0.8)
+      textDecoration none
+      borderRadius (px 20) (px 20) (px 20) (px 20)
+      fontWeight $ weight 500
+      transition "all" (sec 0.2) ease (sec 0)
+      
+      hover & do
+        textDecoration none
+        opacity 0.8
+  
+  -- Breadcrumbs styling
+  ".breadcrumbs" ? do
+    marginBottom (Clay.rem 1.5)
+    fontSize (Clay.rem 1.4)
+    
+    ".breadcrumb-link" ? do
+      textDecoration none
+      fontWeight $ weight 500
+      
+      hover & do
+        textDecoration underline
+    
+    ".breadcrumb-separator" ? do
+      margin (Clay.rem 0) (Clay.rem 0.5) (Clay.rem 0) (Clay.rem 0.5)
+      opacity 0.6
+  
+  ".breadcrumbs-bottom" ? do
+    marginTop (Clay.rem 2)
+    marginBottom (Clay.rem 1)
+
   a ? do
     textDecoration underline
     -- Using the standard text-decoration property only
@@ -758,6 +933,19 @@ baseStyles = do
     borderLeftStyle solid
     paddingLeft (Clay.rem 1)
     fontStyle italic
+
+  -- Notes navigation list styling (overrides general list styles)
+  "nav[aria-label=\"List of all notes\"]" ? do
+    textAlign $ alignSide sideLeft
+    
+    "ul" ? do
+      listStyleType none
+      paddingLeft nil
+      
+      "li" ? do
+        marginBottom (Clay.rem 0.8)
+        display block
+        textAlign $ alignSide sideLeft
 
   -- Lists styling
   ul ? do
@@ -851,6 +1039,51 @@ lightModeStyles = do
       a ? do
         focus & do
           outline solid (px 3) dawnPine
+    
+    -- Note colors for light mode
+    ".note" ? do
+      ".note-header" ? do
+        borderBottomColor dawnMuted
+      
+      ".note-title" ? do
+        color dawnLove
+      
+      ".note-date" ? do
+        color dawnSubtle
+      
+      ".note-tag" ? do
+        backgroundColor dawnOverlay
+        color dawnPine
+    
+    -- Breadcrumb colors for light mode
+    ".breadcrumbs" ? do
+      ".breadcrumb-link" ? do
+        color dawnFoam
+        
+        hover & do
+          color dawnIris
+    
+    -- Notes listing colors for light mode
+    ".notes-list" ? do
+      ".note-listing" ? do
+        borderBottomColor dawnMuted
+        
+        "h2" ? do
+          "a" ? do
+            color dawnLove
+            
+            hover & do
+              color dawnRose
+    
+    -- Tag cloud colors for light mode
+    ".tag-cloud" ? do
+      "a" ? do
+        backgroundColor dawnOverlay
+        color dawnPine
+        
+        hover & do
+          backgroundColor dawnMuted
+          color dawnText
 
 -- Fallback styles (light theme for browsers without prefers-color-scheme support)
 fallbackStyles :: Css
@@ -911,6 +1144,51 @@ fallbackStyles = do
     a ? do
       focus & do
         outline solid (px 3) dawnPine
+  
+  -- Note colors for fallback
+  ".note" ? do
+    ".note-header" ? do
+      borderBottomColor dawnMuted
+    
+    ".note-title" ? do
+      color dawnLove
+    
+    ".note-date" ? do
+      color dawnSubtle
+    
+    ".note-tag" ? do
+      backgroundColor dawnOverlay
+      color dawnPine
+  
+  -- Breadcrumb colors for fallback
+  ".breadcrumbs" ? do
+    ".breadcrumb-link" ? do
+      color dawnFoam
+      
+      hover & do
+        color dawnIris
+  
+  -- Notes listing colors for fallback
+  ".notes-list" ? do
+    ".note-listing" ? do
+      borderBottomColor dawnMuted
+      
+      "h2" ? do
+        "a" ? do
+          color dawnLove
+          
+          hover & do
+            color dawnRose
+  
+  -- Tag cloud colors for fallback
+  ".tag-cloud" ? do
+    "a" ? do
+      backgroundColor dawnOverlay
+      color dawnPine
+      
+      hover & do
+        backgroundColor dawnMuted
+        color dawnText
 
 main :: IO ()
 main = putCss $ do

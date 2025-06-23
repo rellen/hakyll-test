@@ -10,6 +10,7 @@ import System.Process (callProcess, readProcessWithExitCode)
 import System.Directory (doesFileExist)
 import System.Exit (ExitCode(..))
 import System.FilePath ((</>))
+import Data.List (nub)
 
 --------------------------------------------------------------------------------
 main :: IO ()
@@ -53,6 +54,14 @@ main = do
           >>= loadAndApplyTemplate "templates/default.html" siteCtx
           >>= relativizeUrls
 
+    match "notes/*" $ do
+      route $ setExtension "html"
+      compile $
+        pandocCompiler
+          >>= loadAndApplyTemplate "templates/note.html" (noteCtx `mappend` siteCtx)
+          >>= loadAndApplyTemplate "templates/default.html" (noteCtx `mappend` siteCtx)
+          >>= relativizeUrls
+
     match "posts/*" $ do
       route $ setExtension "html"
       compile $
@@ -73,6 +82,39 @@ main = do
         makeItem ""
           >>= loadAndApplyTemplate "templates/archive.html" archiveCtx
           >>= loadAndApplyTemplate "templates/default.html" archiveCtx
+          >>= relativizeUrls
+
+    -- Generate tag archive pages
+    tags <- buildTagsWith getNoteTags "notes/*" (fromCapture "note-tags/*.html")
+
+    create ["notes.html"] $ do
+      route idRoute
+      compile $ do
+        notes <- loadAll "notes/*"
+        tagCloud <- renderNoteTagCloud 0.8 1.6 tags
+        let notesArchiveCtx =
+              listField "notes" noteCtx (return notes)
+                `mappend` constField "title" "Notes"
+                `mappend` constField "tagcloud" tagCloud
+                `mappend` siteCtx
+
+        makeItem ""
+          >>= loadAndApplyTemplate "templates/notes-archive.html" notesArchiveCtx
+          >>= loadAndApplyTemplate "templates/default.html" notesArchiveCtx
+          >>= relativizeUrls
+    tagsRules tags $ \tag pattern -> do
+      route idRoute
+      compile $ do
+        notes <- loadAll pattern
+        let tagCtx =
+              constField "tag" tag
+                `mappend` listField "notes" noteCtx (return notes)
+                `mappend` constField "title" ("Notes tagged \"" ++ tag ++ "\"")
+                `mappend` siteCtx
+
+        makeItem ""
+          >>= loadAndApplyTemplate "templates/tag-archive.html" tagCtx
+          >>= loadAndApplyTemplate "templates/default.html" tagCtx
           >>= relativizeUrls
 
     match "index.html" $ do
@@ -199,10 +241,81 @@ copyrightCtx = do
   years <- getCopyrightYears
   return $ constField "copyright" years
 
--- Post context
+-- Custom split function for comma-separated values
+splitOnComma :: String -> [String]
+splitOnComma [] = []
+splitOnComma str = 
+  let (before, after) = break (== ',') str
+  in before : case after of
+                [] -> []
+                (_:rest) -> splitOnComma rest
+
+-- Custom tag extractor for comma-separated tags
+getNoteTags :: MonadMetadata m => Identifier -> m [String]
+getNoteTags identifier = do
+  metadata <- getMetadata identifier
+  case lookupString "tags" metadata of
+    Nothing -> return []
+    Just tagsStr -> return $ map (dropWhile (== ' ') . reverse . dropWhile (== ' ') . reverse) $ splitOnComma tagsStr
+
+-- Custom tags context that handles comma-separated tags with links
+tagsCtx :: Context String
+tagsCtx = field "tags" $ \item -> do
+  metadata <- getMetadata (itemIdentifier item)
+  case lookupString "tags" metadata of
+    Nothing -> noResult "No tags field"
+    Just tagsStr -> do
+      let tags = map (dropWhile (== ' ') . reverse . dropWhile (== ' ') . reverse) $ splitOnComma tagsStr
+          tagLinks = map (\tag -> "<a href=\"/note-tags/" ++ urlEncode tag ++ ".html\" class=\"note-tag\">" ++ tag ++ "</a>") tags
+      return $ unwords tagLinks
+
+-- Simple URL encoding for tag names  
+urlEncode :: String -> String
+urlEncode = map encode
+  where
+    encode c
+      | c == ' ' = '-'
+      | c `elem` ("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_" :: String) = c
+      | otherwise = '-'  -- Replace any special characters with dash
+
+-- Custom tag cloud renderer for note tags
+renderNoteTagCloud :: Double -> Double -> Tags -> Compiler String
+renderNoteTagCloud minSize maxSize tags = do
+  let tagCounts = map (\(tag, identifiers) -> (tag, length identifiers)) $ tagsMap tags
+  
+  if null tagCounts
+    then return ""
+    else do
+      let minCount = fromIntegral $ minimum $ map snd tagCounts
+          maxCount = fromIntegral $ maximum $ map snd tagCounts
+          sizeRange = if maxCount == minCount then 0 else maxSize - minSize
+          
+      let renderTag (tag, count) = 
+            let size = if sizeRange == 0 
+                      then minSize 
+                      else minSize + (fromIntegral count - minCount) / (maxCount - minCount) * sizeRange
+                sizeEm = size
+                noteCount = show count
+                plural = if count == 1 then "note" else "notes"
+            in "<li><a href=\"/note-tags/" ++ urlEncode tag ++ ".html\" style=\"font-size: " ++ show sizeEm ++ "em\" aria-label=\"View " ++ noteCount ++ " " ++ plural ++ " tagged with " ++ tag ++ "\">" ++ tag ++ "</a></li>"
+            
+      let tagItems = unlines $ map renderTag tagCounts
+      return $ "<nav aria-label=\"Browse notes by tag\">\n  <ul class=\"tag-list\">\n" ++ tagItems ++ "  </ul>\n</nav>"
+
+-- Post context (uses frontmatter date)
 postCtx :: Context String
 postCtx =
   dateField "date" "%B %e, %Y"
+    `mappend` dateField "datetime" "%Y-%m-%d"
+    `mappend` tagsCtx
+    `mappend` defaultContext
+
+-- Note context (uses file modification date)
+noteCtx :: Context String
+noteCtx =
+  modificationTimeField "date" "%B %e, %Y"
+    `mappend` modificationTimeField "datetime" "%Y-%m-%d"
+    `mappend` tagsCtx
     `mappend` defaultContext
 
 --------------------------------------------------------------------------------

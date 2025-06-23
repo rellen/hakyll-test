@@ -1,0 +1,23 @@
+<h1>Notes tagged with "$tag$"</h1>
+
+<div class="notes-list">
+$for(notes)$
+  <article class="note-listing">
+    <h2><a href="$url$">$title$</a></h2>
+    $if(date)$
+    <time class="note-date" datetime="$datetime$">$date$</time>
+    $endif$
+    $if(tags)$
+    <div class="note-tags">
+      $tags$
+    </div>
+    $endif$
+  </article>
+$endfor$
+</div>
+
+<nav class="breadcrumbs breadcrumbs-bottom" aria-label="Breadcrumb navigation">
+  <a href="../notes.html" class="breadcrumb-link">← Back to Notes</a>
+  <span class="breadcrumb-separator"> | </span>
+  <a href="../notes.html#tag-cloud" class="breadcrumb-link">Browse all tags</a>
+</nav>
