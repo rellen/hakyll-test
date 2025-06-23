@@ -9,13 +9,11 @@ import Control.Monad (liftM)
 import System.Process (callProcess, readProcessWithExitCode)
 import System.Directory (doesFileExist)
 import System.Exit (ExitCode(..))
+import System.FilePath ((</>))
 
 --------------------------------------------------------------------------------
 main :: IO ()
 main = do
-  -- Generate favicon artifacts before building site
-  generateFavicons
-  
   -- Get copyright years and create a context
   copyrightYearsCtx <- copyrightCtx
   let siteCtx = copyrightYearsCtx `mappend` defaultContext
@@ -41,22 +39,11 @@ main = do
       route idRoute
       compile copyFileCompiler
 
-    -- Copy favicon files from _icons directory to root
-    mapM_ copyIconsToRoot 
-      [ "favicon.svg"
-      , "favicon.ico" 
-      , "favicon-*.png"
-      , "apple-touch-icon*.png"
-      , "android-chrome-*.png"
-      , "mstile-*.png"
-      , "site.webmanifest"
-      , "browserconfig.xml"
-      ]
+    -- Generate favicons from source SVG using custom compilers
+    generateFaviconRules
     
-    -- Copy logo to images directory
-    match "_icons/logo.svg" $ do
-      route $ gsubRoute "_icons/" (const "images/")
-      compile copyFileCompiler
+    -- Favicon generation is now handled in generateFaviconRules
+    -- No need for manual copying as files are generated directly to their target locations
 
     match (fromList ["about.md", "contact.md", "talks.md"]) $ do
       route $ setExtension "html"
@@ -104,12 +91,97 @@ main = do
     match "templates/*" $ compile templateBodyCompiler
 
 --------------------------------------------------------------------------------
--- Helper function to copy icons from _icons/ to root
-copyIconsToRoot :: String -> Rules ()
-copyIconsToRoot pattern = do
-  match (fromGlob $ "_icons/" ++ pattern) $ do
-    route $ gsubRoute "_icons/" (const "")
+-- Hakyll-style favicon generation rules
+generateFaviconRules :: Rules ()
+generateFaviconRules = do
+  -- Generate PNG favicons from source SVG first
+  mapM_ generatePNGFaviconRule faviconSizes
+
+  -- Copy SVG favicon directly to root
+  match "logo-base.svg" $ do
+    route $ constRoute "favicon.svg"
     compile copyFileCompiler
+  
+  -- Generate web manifest directly to root
+  create ["site.webmanifest"] $ do
+    route idRoute
+    compile $ makeItem webManifestContent
+  
+  -- Generate browserconfig directly to root
+  create ["browserconfig.xml"] $ do
+    route idRoute
+    compile $ makeItem browserConfigContent
+
+-- Generate a single PNG favicon rule
+generatePNGFaviconRule :: (Int, String) -> Rules ()
+generatePNGFaviconRule (size, filename) = do
+  create [fromFilePath filename] $ do
+    route idRoute
+    compile $ do
+      -- Get the current item's destination path
+      itemId <- getUnderlying
+      dest <- getRoute itemId
+      case dest of
+        Just destPath -> do
+          unsafeCompiler $ do
+            -- Use defaultConfiguration to get the default destination directory
+            let destDir = destinationDirectory defaultConfiguration
+            let fullPath = destDir </> destPath
+            magickPath <- findImageMagick
+            case magickPath of
+              Just path -> callProcess path
+                [ "-background", "transparent"
+                , "-size", show size ++ "x" ++ show size
+                , "logo-base.svg"
+                , fullPath
+                ]
+              Nothing -> putStrLn $ "Error: ImageMagick not found, skipping " ++ filename
+          makeItem ("" :: String)
+        Nothing -> do
+          unsafeCompiler $ putStrLn $ "Error: Could not determine output path for " ++ filename
+          makeItem ("" :: String)
+
+--------------------------------------------------------------------------------
+-- Web manifest content as a string constant
+webManifestContent :: String
+webManifestContent = unlines
+  [ "{"
+  , "  \"name\": \"Rob's Ramblings\","
+  , "  \"short_name\": \"r!\","
+  , "  \"description\": \"Rob's technical blog and ramblings\","
+  , "  \"icons\": ["
+  , "    {"
+  , "      \"src\": \"/android-chrome-192x192.png\","
+  , "      \"sizes\": \"192x192\","
+  , "      \"type\": \"image/png\""
+  , "    },"
+  , "    {"
+  , "      \"src\": \"/android-chrome-512x512.png\","
+  , "      \"sizes\": \"512x512\","
+  , "      \"type\": \"image/png\""
+  , "    }"
+  , "  ],"
+  , "  \"theme_color\": \"#3e8fb0\","
+  , "  \"background_color\": \"#232136\","
+  , "  \"display\": \"minimal-ui\","
+  , "  \"start_url\": \"/\""
+  , "}"
+  ]
+
+-- Browser config content as a string constant
+browserConfigContent :: String
+browserConfigContent = unlines
+  [ "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+  , "<browserconfig>"
+  , "    <msapplication>"
+  , "        <tile>"
+  , "            <square150x150logo src=\"/mstile-150x150.png\"/>"
+  , "            <square310x310logo src=\"/mstile-310x310.png\"/>"
+  , "            <TileColor>#3e8fb0</TileColor>"
+  , "        </tile>"
+  , "    </msapplication>"
+  , "</browserconfig>"
+  ]
 
 --------------------------------------------------------------------------------
 -- Get copyright year string
@@ -170,117 +242,4 @@ findImageMagick = do
   where
     strip = reverse . dropWhile (== '\n') . reverse
 
--- Generate a single PNG favicon using ImageMagick
-generateFaviconPNG :: Int -> String -> IO ()
-generateFaviconPNG size filename = do
-  putStrLn $ "Generating " ++ filename ++ " (" ++ show size ++ "x" ++ show size ++ ")"
-  magickPath <- findImageMagick
-  case magickPath of
-    Just path -> callProcess path
-      [ "-background", "transparent"
-      , "-size", show size ++ "x" ++ show size
-      , "logo-base.svg"
-      , "_icons/" ++ filename
-      ]
-    Nothing -> putStrLn $ "Error: ImageMagick not found, skipping " ++ filename
 
--- Generate ICO file from PNG files
-generateICO :: IO ()
-generateICO = do
-  putStrLn "Generating favicon.ico"
-  magickPath <- findImageMagick
-  case magickPath of
-    Just path -> callProcess path ["_icons/favicon-16x16.png", "_icons/favicon-32x32.png", "_icons/favicon-48x48.png", "_icons/favicon.ico"]
-    Nothing -> putStrLn "Error: ImageMagick not found, skipping favicon.ico"
-
--- Create web app manifest
-createWebManifest :: IO ()
-createWebManifest = do
-  putStrLn "Creating site.webmanifest"
-  writeFile "_icons/site.webmanifest" $ unlines
-    [ "{"
-    , "  \"name\": \"Rob's Ramblings\","
-    , "  \"short_name\": \"r!\","
-    , "  \"description\": \"Rob's technical blog and ramblings\","
-    , "  \"icons\": ["
-    , "    {"
-    , "      \"src\": \"/android-chrome-192x192.png\","
-    , "      \"sizes\": \"192x192\","
-    , "      \"type\": \"image/png\""
-    , "    },"
-    , "    {"
-    , "      \"src\": \"/android-chrome-512x512.png\","
-    , "      \"sizes\": \"512x512\","
-    , "      \"type\": \"image/png\""
-    , "    }"
-    , "  ],"
-    , "  \"theme_color\": \"#3e8fb0\","
-    , "  \"background_color\": \"#232136\","
-    , "  \"display\": \"minimal-ui\","
-    , "  \"start_url\": \"/\""
-    , "}"
-    ]
-
--- Create browserconfig.xml for Windows tiles
-createBrowserConfig :: IO ()
-createBrowserConfig = do
-  putStrLn "Creating browserconfig.xml"
-  writeFile "_icons/browserconfig.xml" $ unlines
-    [ "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
-    , "<browserconfig>"
-    , "    <msapplication>"
-    , "        <tile>"
-    , "            <square150x150logo src=\"/mstile-150x150.png\"/>"
-    , "            <square310x310logo src=\"/mstile-310x310.png\"/>"
-    , "            <TileColor>#3e8fb0</TileColor>"
-    , "        </tile>"
-    , "    </msapplication>"
-    , "</browserconfig>"
-    ]
-
--- Check if ImageMagick is available
-checkImageMagick :: IO Bool
-checkImageMagick = do
-  magickPath <- findImageMagick
-  case magickPath of
-    Just _ -> return True
-    Nothing -> do
-      putStrLn "Warning: ImageMagick not found. PNG favicons will not be generated."
-      putStrLn "Install with: brew install imagemagick (macOS) or sudo apt install imagemagick (Ubuntu)"
-      return False
-
--- Main favicon generation function
-generateFavicons :: IO ()
-generateFavicons = do
-  baseExists <- doesFileExist "logo-base.svg"
-  if not baseExists
-    then putStrLn "Warning: logo-base.svg not found, skipping favicon generation"
-    else do
-      putStrLn "Generating favicon artifacts from logo-base.svg"
-      -- Ensure _icons directory exists
-      callProcess "mkdir" ["-p", "_icons"]
-      hasImageMagick <- checkImageMagick
-      
-      when hasImageMagick $ do
-        -- Generate all PNG sizes
-        mapM_ (uncurry generateFaviconPNG) faviconSizes
-        
-        -- Generate ICO file
-        generateICO
-      
-      -- Copy base SVG for favicon and logo
-      putStrLn "Copying logo-base.svg to favicon.svg"
-      callProcess "cp" ["logo-base.svg", "_icons/favicon.svg"]
-      putStrLn "Copying logo-base.svg to logo.svg"
-      callProcess "cp" ["logo-base.svg", "_icons/logo.svg"]
-      
-      -- Create manifest and browserconfig
-      createWebManifest
-      createBrowserConfig
-      
-      putStrLn "✅ Favicon generation complete!"
-
--- Helper function for conditional execution
-when :: Bool -> IO () -> IO ()
-when True action = action
-when False _ = return ()
