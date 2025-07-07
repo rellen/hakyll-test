@@ -8,6 +8,7 @@ import Hakyll
 import Site.Context (copyrightCtx, getNoteTags, noteCtx, postCtx, renderNoteTagCloud)
 import Site.Favicon (generateFaviconRules)
 import Site.Util (applyTemplateChain)
+import Site.Talks (loadTalks, talksContext)
 
 --------------------------------------------------------------------------------
 main :: IO ()
@@ -40,14 +41,25 @@ main = do
     -- Generate favicons from source SVG using custom compilers
     generateFaviconRules
 
-    -- Favicon generation is now handled in generateFaviconRules
-    -- No need for manual copying as files are generated directly to their target locations
-
-    match (fromList ["about.md", "contact.md", "talks.md"]) $ do
+    match (fromList ["about.md", "contact.md"]) $ do
       route $ setExtension "html"
       compile $
         pandocCompiler
           >>= applyTemplateChain [("templates/page.html", siteCtx), ("templates/default.html", siteCtx)]
+          >>= relativizeUrls
+
+    -- Generate talks page from JSON data
+    create ["talks.html"] $ do
+      route idRoute
+      compile $ do
+        talks <- unsafeCompiler $ loadTalks "data/talks.json"
+        let talksPageCtx =
+              talksContext talks
+                `mappend` constField "title" "Talks"
+                `mappend` siteCtx
+
+        makeItem ""
+          >>= applyTemplateChain [("templates/talks.html", talksPageCtx), ("templates/default.html", talksPageCtx)]
           >>= relativizeUrls
 
     match "notes/*" $ do

@@ -236,6 +236,25 @@ darkModeStyles = do
         hover & do
           color darkIris
 
+    -- Talks colors for dark mode
+    ".talks-list" ? do
+      ".talk" ? do
+        borderBottomColor darkMuted
+        
+      ".video-link" ? do
+        backgroundColor darkFoam
+        color darkBase
+        
+        hover & do
+          backgroundColor darkPine
+        
+      ".slides-link" ? do
+        backgroundColor darkIris  
+        color darkBase
+        
+        hover & do
+          backgroundColor darkLove
+
     -- Notes listing colors for dark mode
     ".notes-list" ? do
       ".note-listing" ? do
@@ -936,6 +955,67 @@ baseStyles = do
     marginTop (Clay.rem 2)
     marginBottom (Clay.rem 1)
 
+  -- Talks styling
+  ".talks-list" ? do
+    marginTop (Clay.rem 2)
+    
+    ".talk" ? do
+      marginBottom (Clay.rem 3)
+      paddingBottom (Clay.rem 2)
+      borderBottomStyle solid
+      borderBottomWidth (px 1)
+      borderBottomColor "#e5e5e5"
+      
+      ".talk-header" ? do
+        marginBottom (Clay.rem 1)
+        
+        ".talk-title" ? do
+          fontSize (Clay.rem 1.8)
+          fontWeight $ weight 600
+          marginBottom (Clay.rem 0.5)
+          lineHeight $ unitless 1.3
+        
+        ".talk-meta" ? do
+          display flex
+          "flex-wrap" -: "wrap"
+          alignItems center
+          fontSize (Clay.rem 1.4)
+          gap (Clay.rem 1)
+          
+          ".talk-organisation" ? do
+            fontWeight $ weight 500
+            
+          ".talk-date" ? do
+            fontStyle italic
+            opacity 0.8
+      
+      ".talk-description" ? do
+        marginBottom (Clay.rem 1.5)
+        lineHeight $ unitless 1.6
+        
+        "p:last-child" ? do
+          marginBottom nil
+      
+      ".talk-links" ? do
+        display flex
+        gap (Clay.rem 1)
+        "flex-wrap" -: "wrap"
+        
+        ".talk-link" ? do
+          display inlineBlock
+          padding (Clay.rem 0.5) (Clay.rem 1) (Clay.rem 0.5) (Clay.rem 1)
+          textDecoration none
+          borderRadius (px 6) (px 6) (px 6) (px 6)
+          fontWeight $ weight 500
+          fontSize (Clay.rem 1.4)
+          transition "all" (sec 0.2) ease (sec 0)
+          
+          ".link-icon" ? do
+            marginRight (Clay.rem 0.5)
+          
+          hover & do
+            textDecoration none
+
   a ? do
     textDecoration underline
     -- Using the standard text-decoration property only
@@ -1117,6 +1197,25 @@ lightModeStyles = do
         hover & do
           color dawnIris
 
+    -- Talks colors for light mode
+    ".talks-list" ? do
+      ".talk" ? do
+        borderBottomColor dawnMuted
+        
+      ".video-link" ? do
+        backgroundColor dawnFoam
+        color dawnBase
+        
+        hover & do
+          backgroundColor dawnPine
+        
+      ".slides-link" ? do
+        backgroundColor dawnIris  
+        color dawnBase
+        
+        hover & do
+          backgroundColor dawnLove
+
     -- Notes listing colors for light mode
     ".notes-list" ? do
       ".note-listing" ? do
@@ -1221,6 +1320,25 @@ fallbackStyles = do
 
       hover & do
         color dawnIris
+
+  -- Talk link colors for fallback
+  ".talks-list" ? do
+    ".talk" ? do
+      borderBottomColor dawnMuted
+      
+    ".video-link" ? do
+      backgroundColor dawnFoam
+      color dawnBase
+      
+      hover & do
+        backgroundColor dawnPine
+      
+    ".slides-link" ? do
+      backgroundColor dawnIris  
+      color dawnBase
+      
+      hover & do
+        backgroundColor dawnLove
 
   -- Notes listing colors for fallback
   ".notes-list" ? do
