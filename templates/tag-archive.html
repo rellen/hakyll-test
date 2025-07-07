@@ -1,19 +1,16 @@
 <h1>Notes tagged with "$tag$"</h1>
 
 <div class="notes-list">
-$for(notes)$
+  $for(notes)$
   <article class="note-listing">
     <h2><a href="$url$">$title$</a></h2>
     $if(date)$
     <time class="note-date" datetime="$datetime$">$date$</time>
-    $endif$
-    $if(tags)$
-    <div class="note-tags">
-      $tags$
-    </div>
+    $endif$ $if(tags)$
+    <div class="note-tags">$tags$</div>
     $endif$
   </article>
-$endfor$
+  $endfor$
 </div>
 
 <nav class="breadcrumbs breadcrumbs-bottom" aria-label="Breadcrumb navigation">
