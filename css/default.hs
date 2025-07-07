@@ -846,6 +846,22 @@ baseStyles = do
       display block
       marginBottom (Clay.rem 0.5)
 
+    ".note-dates" ? do
+      display flex
+      fontSize (Clay.rem 1.2)
+      fontStyle italic
+      marginBottom (Clay.rem 0.5)
+      "flex-wrap" -: "wrap"
+
+    ".note-dates > *" ? do
+      marginRight (Clay.rem 1)
+
+    ".note-published" ? do
+      fontWeight $ weight 500
+
+    ".note-updated" ? do
+      opacity 0.8
+
     ".note-tags" ? do
       display flex
       "flex-wrap" -: "wrap"
@@ -895,6 +911,22 @@ baseStyles = do
         fontStyle italic
         display block
         marginBottom (Clay.rem 0.5)
+
+      ".note-dates" ? do
+        display flex
+        fontSize (Clay.rem 1.1)
+        fontStyle italic
+        marginBottom (Clay.rem 0.5)
+        "flex-wrap" -: "wrap"
+
+      ".note-dates > *" ? do
+        marginRight (Clay.rem 1)
+
+      ".note-published" ? do
+        fontWeight $ weight 500
+
+      ".note-updated" ? do
+        opacity 0.8
 
       ".note-tags" ? do
         marginTop (Clay.rem 0.5)
@@ -1131,7 +1163,7 @@ lightModeStyles = do
 
     footer ? do
       borderTopColor dawnMuted
-      color dawnMuted
+      color dawnText
 
     h1 ? color dawnLove
     h2 ? color dawnIris
@@ -1255,7 +1287,7 @@ fallbackStyles = do
 
   footer ? do
     borderTopColor dawnMuted
-    color dawnMuted
+    color dawnText
 
   h1 ? color dawnLove
   h2 ? color dawnIris

@@ -1,7 +1,16 @@
 <nav aria-label="List of all notes">
   <ul>
     $for(notes)$
-    <li><a href="$url$">$title$</a> - $date$</li>
+    <li>
+      <div class="note-listing">
+        <h2><a href="$url$">$title$</a></h2>
+        <div class="note-dates">
+          <span class="note-published">Published: <time datetime="$published-datetime$">$published$</time></span>
+          <span class="note-updated">Updated: <time datetime="$updated-datetime$">$updated$</time></span>
+        </div>
+        <div class="note-tags">$tags$</div>
+      </div>
+    </li>
     $endfor$
   </ul>
 </nav>

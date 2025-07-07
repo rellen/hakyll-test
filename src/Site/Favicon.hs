@@ -5,7 +5,6 @@ module Site.Favicon
   ( generateFaviconRules,
     generatePNGFaviconRule,
     webManifestContent,
-    browserConfigContent,
     faviconSizes,
     findImageMagick,
   )
@@ -15,6 +14,10 @@ import Hakyll
 import System.Exit (ExitCode (..))
 import System.FilePath ((</>))
 import System.Process (callProcess, readProcessWithExitCode)
+import System.Directory (copyFile, getTemporaryDirectory)
+import System.IO (hClose)
+import System.IO.Temp (withTempFile)
+import qualified Data.ByteString as BS
 
 --------------------------------------------------------------------------------
 -- Hakyll-style favicon generation rules
@@ -33,43 +36,37 @@ generateFaviconRules = do
     route idRoute
     compile $ makeItem webManifestContent
 
-  -- Generate browserconfig directly to root
-  create ["browserconfig.xml"] $ do
-    route idRoute
-    compile $ makeItem browserConfigContent
-
 -- Generate a single PNG favicon rule
 generatePNGFaviconRule :: (Int, String) -> Rules ()
 generatePNGFaviconRule (size, filename) = do
   create [fromFilePath filename] $ do
     route idRoute
     compile $ do
-      -- Get the current item's destination path
-      itemId <- getUnderlying
-      dest <- getRoute itemId
-      case dest of
-        Just destPath -> do
-          unsafeCompiler $ do
-            -- Use defaultConfiguration to get the default destination directory
-            let destDir = destinationDirectory defaultConfiguration
-            let fullPath = destDir </> destPath
-            magickPath <- findImageMagick
-            case magickPath of
-              Just path ->
-                callProcess
-                  path
-                  [ "-background",
-                    "transparent",
-                    "-size",
-                    show size ++ "x" ++ show size,
-                    "logo-base.svg",
-                    fullPath
-                  ]
-              Nothing -> putStrLn $ "Error: ImageMagick not found, skipping " ++ filename
-          makeItem ("" :: String)
-        Nothing -> do
-          unsafeCompiler $ putStrLn $ "Error: Could not determine output path for " ++ filename
-          makeItem ("" :: String)
+      unsafeCompiler $ do
+        magickPath <- findImageMagick
+        case magickPath of
+          Just path -> do
+            putStrLn $ "Generating " ++ filename ++ " at " ++ show size ++ "px"
+            tempDir <- getTemporaryDirectory
+            withTempFile tempDir "favicon.png" $ \tempFile handle -> do
+              hClose handle
+              callProcess
+                path
+                [ "-background",
+                  "transparent",
+                  "logo-base.svg",
+                  "-resize",
+                  show size ++ "x" ++ show size,
+                  tempFile
+                ]
+              -- Read the generated file and return its content
+              content <- BS.readFile tempFile
+              putStrLn $ "Generated " ++ show (BS.length content) ++ " bytes for " ++ filename
+              return content
+          Nothing -> do
+            putStrLn $ "Error: ImageMagick not found, skipping " ++ filename
+            return BS.empty
+      >>= makeItem
 
 --------------------------------------------------------------------------------
 -- Web manifest content as a string constant
@@ -82,56 +79,31 @@ webManifestContent =
       "  \"description\": \"Rob's technical blog and ramblings\",",
       "  \"icons\": [",
       "    {",
-      "      \"src\": \"/android-chrome-192x192.png\",",
+      "      \"src\": \"/icon-192.png\",",
       "      \"sizes\": \"192x192\",",
       "      \"type\": \"image/png\"",
       "    },",
       "    {",
-      "      \"src\": \"/android-chrome-512x512.png\",",
+      "      \"src\": \"/icon-512.png\",",
       "      \"sizes\": \"512x512\",",
       "      \"type\": \"image/png\"",
       "    }",
       "  ],",
-      "  \"theme_color\": \"#3e8fb0\",",
-      "  \"background_color\": \"#232136\",",
+      "  \"start_url\": \"/\",",
       "  \"display\": \"minimal-ui\",",
-      "  \"start_url\": \"/\"",
+      "  \"theme_color\": \"#3e8fb0\",",
+      "  \"background_color\": \"#232136\"",
       "}"
     ]
 
--- Browser config content as a string constant
-browserConfigContent :: String
-browserConfigContent =
-  unlines
-    [ "<?xml version=\"1.0\" encoding=\"utf-8\"?>",
-      "<browserconfig>",
-      "    <msapplication>",
-      "        <tile>",
-      "            <square150x150logo src=\"/mstile-150x150.png\"/>",
-      "            <square310x310logo src=\"/mstile-310x310.png\"/>",
-      "            <TileColor>#3e8fb0</TileColor>",
-      "        </tile>",
-      "    </msapplication>",
-      "</browserconfig>"
-    ]
 
 --------------------------------------------------------------------------------
 -- Favicon sizes and filenames
 faviconSizes :: [(Int, String)]
 faviconSizes =
-  [ (16, "favicon-16x16.png"),
-    (32, "favicon-32x32.png"),
-    (48, "favicon-48x48.png"),
-    (64, "favicon-64x64.png"),
-    (180, "apple-touch-icon.png"),
-    (152, "apple-touch-icon-152x152.png"),
-    (120, "apple-touch-icon-120x120.png"),
-    (76, "apple-touch-icon-76x76.png"),
-    (192, "android-chrome-192x192.png"),
-    (512, "android-chrome-512x512.png"),
-    (144, "mstile-144x144.png"),
-    (150, "mstile-150x150.png"),
-    (310, "mstile-310x310.png")
+  [ (32, "favicon-32x32.png"),  -- For favicon.ico generation
+    (192, "icon-192.png"),      -- PWA/Android
+    (512, "icon-512.png")       -- PWA/Android
   ]
 
 -- Find ImageMagick executable using which command

@@ -1,5 +1,6 @@
 ---
 title: Testing Note Tags
+date: 2025-01-02
 tags: test, hakyll, web-development
 ---
 

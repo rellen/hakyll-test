@@ -85,10 +85,14 @@ postCtx =
     `mappend` tagsCtx
     `mappend` defaultContext
 
--- Note context (uses file modification date)
+-- Note context (shows both published and updated dates)
 noteCtx :: Context String
 noteCtx =
-  modificationTimeField "date" "%B %e, %Y"
-    `mappend` modificationTimeField "datetime" "%Y-%m-%d"
+  dateField "date" "%B %e, %Y"
+    `mappend` dateField "datetime" "%Y-%m-%d"
+    `mappend` dateField "published" "%B %e, %Y"
+    `mappend` dateField "published-datetime" "%Y-%m-%d"
+    `mappend` modificationTimeField "updated" "%B %e, %Y"
+    `mappend` modificationTimeField "updated-datetime" "%Y-%m-%d"
     `mappend` tagsCtx
     `mappend` defaultContext
