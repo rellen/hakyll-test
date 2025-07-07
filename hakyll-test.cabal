@@ -5,6 +5,10 @@ cabal-version:      >= 1.10
 
 executable site
   main-is:          site.hs
+  hs-source-dirs:   ., src
+  other-modules:    Site.Favicon
+                  , Site.Context
+                  , Site.Util
   build-depends:    base == 4.*
                   , hakyll == 4.16.*
                   , clay == 0.16.*

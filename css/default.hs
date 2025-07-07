@@ -4,7 +4,7 @@ module DefaultCSS where
 
 import Clay
 import qualified Clay.Media as Media
-import Clay.Stylesheet (Feature(..))
+import Clay.Stylesheet (Feature (..))
 import Data.Map (Map)
 import qualified Data.Map as Map
 import qualified Data.Text.Lazy
@@ -16,100 +16,158 @@ prefersReducedMotion = Feature "prefers-reduced-motion" (Just "reduce")
 
 -- Rose Pine color palette
 -- Dawn (Light theme)
-dawnBase         = "#faf4ed" :: Color -- Base background
-dawnSurface      = "#fffaf3" :: Color -- Surface background
-dawnOverlay      = "#f2e9e1" :: Color -- Overlay background
-dawnMuted        = "#9893a5" :: Color -- Muted foreground
-dawnSubtle       = "#797593" :: Color -- Subtle foreground
-dawnText         = "#575279" :: Color -- Text foreground
-dawnLove         = "#b4637a" :: Color -- Love accent
-dawnGold         = "#ea9d34" :: Color -- Gold accent
-dawnRose         = "#d7827e" :: Color -- Rose accent
-dawnPine         = "#286983" :: Color -- Pine accent
-dawnFoam         = "#56949f" :: Color -- Foam accent
-dawnIris         = "#907aa9" :: Color -- Iris accent
+dawnBase = "#faf4ed" :: Color -- Base background
+
+dawnSurface = "#fffaf3" :: Color -- Surface background
+
+dawnOverlay = "#f2e9e1" :: Color -- Overlay background
+
+dawnMuted = "#9893a5" :: Color -- Muted foreground
+
+dawnSubtle = "#797593" :: Color -- Subtle foreground
+
+dawnText = "#575279" :: Color -- Text foreground
+
+dawnLove = "#b4637a" :: Color -- Love accent
+
+dawnGold = "#ea9d34" :: Color -- Gold accent
+
+dawnRose = "#d7827e" :: Color -- Rose accent
+
+dawnPine = "#286983" :: Color -- Pine accent
+
+dawnFoam = "#56949f" :: Color -- Foam accent
+
+dawnIris = "#907aa9" :: Color -- Iris accent
+
 dawnHighlightLow = "#f4ede8" :: Color -- Highlight low
+
 dawnHighlightMed = "#dfdad9" :: Color -- Highlight med
+
 dawnHighlightHigh = "#cecacd" :: Color -- Highlight high
 
 -- Rose Pine (Dark theme)
-roseBase         = "#191724" :: Color -- Base background
-roseSurface      = "#1f1d2e" :: Color -- Surface background
-roseOverlay      = "#26233a" :: Color -- Overlay background
-roseMuted        = "#6e6a86" :: Color -- Muted foreground
-roseSubtle       = "#908caa" :: Color -- Subtle foreground
-roseText         = "#e0def4" :: Color -- Text foreground
-roseLove         = "#eb6f92" :: Color -- Love accent
-roseGold         = "#f6c177" :: Color -- Gold accent
-roseRose         = "#ebbcba" :: Color -- Rose accent
-rosePine         = "#31748f" :: Color -- Pine accent
-roseFoam         = "#9ccfd8" :: Color -- Foam accent
-roseIris         = "#c4a7e7" :: Color -- Iris accent
+roseBase = "#191724" :: Color -- Base background
+
+roseSurface = "#1f1d2e" :: Color -- Surface background
+
+roseOverlay = "#26233a" :: Color -- Overlay background
+
+roseMuted = "#6e6a86" :: Color -- Muted foreground
+
+roseSubtle = "#908caa" :: Color -- Subtle foreground
+
+roseText = "#e0def4" :: Color -- Text foreground
+
+roseLove = "#eb6f92" :: Color -- Love accent
+
+roseGold = "#f6c177" :: Color -- Gold accent
+
+roseRose = "#ebbcba" :: Color -- Rose accent
+
+rosePine = "#31748f" :: Color -- Pine accent
+
+roseFoam = "#9ccfd8" :: Color -- Foam accent
+
+roseIris = "#c4a7e7" :: Color -- Iris accent
+
 roseHighlightLow = "#21202e" :: Color -- Highlight low
+
 roseHighlightMed = "#403d52" :: Color -- Highlight med
+
 roseHighlightHigh = "#524f67" :: Color -- Highlight high
 
 -- Rose Pine Moon (Dark theme)
-moonBase         = "#232136" :: Color -- Base background
-moonSurface      = "#2a273f" :: Color -- Surface background
-moonOverlay      = "#393552" :: Color -- Overlay background
-moonMuted        = "#6e6a86" :: Color -- Muted foreground
-moonSubtle       = "#908caa" :: Color -- Subtle foreground
-moonText         = "#e0def4" :: Color -- Text foreground
-moonLove         = "#eb6f92" :: Color -- Love accent
-moonGold         = "#f6c177" :: Color -- Gold accent
-moonRose         = "#ea9a97" :: Color -- Rose accent
-moonPine         = "#3e8fb0" :: Color -- Pine accent
-moonFoam         = "#9ccfd8" :: Color -- Foam accent
-moonIris         = "#c4a7e7" :: Color -- Iris accent
+moonBase = "#232136" :: Color -- Base background
+
+moonSurface = "#2a273f" :: Color -- Surface background
+
+moonOverlay = "#393552" :: Color -- Overlay background
+
+moonMuted = "#6e6a86" :: Color -- Muted foreground
+
+moonSubtle = "#908caa" :: Color -- Subtle foreground
+
+moonText = "#e0def4" :: Color -- Text foreground
+
+moonLove = "#eb6f92" :: Color -- Love accent
+
+moonGold = "#f6c177" :: Color -- Gold accent
+
+moonRose = "#ea9a97" :: Color -- Rose accent
+
+moonPine = "#3e8fb0" :: Color -- Pine accent
+
+moonFoam = "#9ccfd8" :: Color -- Foam accent
+
+moonIris = "#c4a7e7" :: Color -- Iris accent
+
 moonHighlightLow = "#2a283e" :: Color -- Highlight low
+
 moonHighlightMed = "#44415a" :: Color -- Highlight med
+
 moonHighlightHigh = "#56526e" :: Color -- Highlight high
 
 -- *** CHANGE HERE TO SWITCH DARK THEMES ***
+
 -- Options: "rose" (original Rose Pine) or "moon" (Rose Pine Moon)
-darkTheme = "moon"  -- Set to "rose" or "moon"
+darkTheme = "moon" -- Set to "rose" or "moon"
 
 -- Function to select dark theme colors based on the theme choice
 darkBase = if darkTheme == "rose" then roseBase else moonBase
+
 darkSurface = if darkTheme == "rose" then roseSurface else moonSurface
+
 darkOverlay = if darkTheme == "rose" then roseOverlay else moonOverlay
+
 darkMuted = if darkTheme == "rose" then roseMuted else moonMuted
+
 darkSubtle = if darkTheme == "rose" then roseSubtle else moonSubtle
+
 darkText = if darkTheme == "rose" then roseText else moonText
+
 darkLove = if darkTheme == "rose" then roseLove else moonLove
+
 darkGold = if darkTheme == "rose" then roseGold else moonGold
+
 darkRose = if darkTheme == "rose" then roseRose else moonRose
+
 darkPine = if darkTheme == "rose" then rosePine else moonPine
+
 darkFoam = if darkTheme == "rose" then roseFoam else moonFoam
+
 darkIris = if darkTheme == "rose" then roseIris else moonIris
+
 darkHighlightLow = if darkTheme == "rose" then roseHighlightLow else moonHighlightLow
+
 darkHighlightMed = if darkTheme == "rose" then roseHighlightMed else moonHighlightMed
+
 darkHighlightHigh = if darkTheme == "rose" then roseHighlightHigh else moonHighlightHigh
+
 darkModeStyles :: Css
 darkModeStyles = do
   query Media.screen [Media.prefersColorScheme Media.dark] $ do
     body ? do
       color darkText
       backgroundColor darkBase
-    
+
     header ? borderBottomColor darkMuted
-    
+
     nav ? do
       a ? do
         color darkFoam
         hover & color darkIris
-    
+
     footer ? do
       borderTopColor darkMuted
       color darkSubtle
-    
+
     h1 ? color darkLove
     h2 ? color darkIris
-    
+
     article ? do
       ".header" ? color darkSubtle
-    
+
     a ? do
       color darkFoam
       hover & do
@@ -117,85 +175,85 @@ darkModeStyles = do
 
     ".keep-in-touch ul li a" ? do
       textDecoration none
-    
+
     ".logo" ? do
       a ? do
         color darkText
         hover & color darkLove
-    
+
     Clay.code ? backgroundColor darkOverlay
     pre ? backgroundColor darkOverlay
-    
+
     blockquote ? do
       borderLeftColor darkMuted
       color darkSubtle
-    
+
     table ? do
       thead ? borderBottomColor darkMuted
       td ? borderBottomColor darkMuted
-    
+
     -- Focus indicators for dark mode
     a ? do
       focus & do
         outline solid (px 2) darkFoam
-    
+
     -- Navigation focus indicators for dark mode
     nav ? do
       a ? do
         focus & do
           outline solid (px 3) darkFoam
-    
+
     -- Close button dark mode styles
     ".nav-close" ? do
       color darkText
-      
+
       hover & do
         color darkLove
-      
+
       focus & do
         outline solid (px 2) darkFoam
-    
+
     -- Note colors for dark mode
     ".note" ? do
       ".note-header" ? do
         borderBottomColor darkMuted
-      
+
       ".note-title" ? do
         color darkLove
-      
+
       ".note-date" ? do
         color darkSubtle
-      
+
       ".note-tag" ? do
         backgroundColor darkOverlay
         color darkFoam
-    
+
     -- Breadcrumb colors for dark mode
     ".breadcrumbs" ? do
       ".breadcrumb-link" ? do
         color darkFoam
-        
+
         hover & do
           color darkIris
-    
+
     -- Notes listing colors for dark mode
     ".notes-list" ? do
       ".note-listing" ? do
         borderBottomColor darkMuted
-        
+
         "h2" ? do
           "a" ? do
             color darkLove
-            
+
             hover & do
               color darkIris
-    
+
     -- Tag cloud colors for dark mode
     ".tag-cloud" ? do
       "a" ? do
         backgroundColor darkOverlay
         color darkFoam
-        
+
         hover & do
           backgroundColor darkMuted
           color darkText
@@ -207,17 +265,17 @@ reducedMotionStyles = do
     -- Disable all transitions and animations
     star ? do
       transition "none" (sec 0) ease (sec 0)
-      
+
     -- Disable hamburger animations
     ".hamburger" ? do
       transition "none" (sec 0) ease (sec 0)
-    
+
     ".hamburger:before" ? do
       transition "none" (sec 0) ease (sec 0)
-    
+
     ".hamburger:after" ? do
       transition "none" (sec 0) ease (sec 0)
-    
+
     -- Disable nav menu slide animations
     nav ? do
       transition "none" (sec 0) ease (sec 0)
@@ -270,7 +328,7 @@ hamburgerMenuStyle = do
     left $ px (-999)
     height $ px 0
     width $ px 0
-    
+
   ".nav-toggle-label" ? do
     position absolute
     top $ Clay.rem 0.6
@@ -284,7 +342,6 @@ hamburgerMenuStyle = do
 
   ".nav-toggle-label" ? do
     color dawnText -- Set explicit color for light mode
-    
   ".hamburger" ? do
     position relative
     width $ Clay.rem 2
@@ -292,7 +349,7 @@ hamburgerMenuStyle = do
     backgroundColor dawnText -- Explicit color for light mode
     borderRadius (px 2) (px 2) (px 2) (px 2)
     transition "transform" (sec 0.3) ease (sec 0)
-    
+
   ".hamburger:before" ? do
     content (stringContent "")
     position absolute
@@ -304,7 +361,7 @@ hamburgerMenuStyle = do
     borderRadius (px 2) (px 2) (px 2) (px 2)
     transition "top" (sec 0.3) ease (sec 0)
     transition "transform" (sec 0.3) ease (sec 0)
-    
+
   ".hamburger:after" ? do
     content (stringContent "")
     position absolute
@@ -316,32 +373,32 @@ hamburgerMenuStyle = do
     borderRadius (px 2) (px 2) (px 2) (px 2)
     transition "bottom" (sec 0.3) ease (sec 0)
     transition "transform" (sec 0.3) ease (sec 0)
-    
+
   -- Dark mode hamburger color
   query Media.screen [Media.prefersColorScheme Media.dark] $ do
     ".nav-toggle-label" ? do
       color darkText
-      
+
     ".hamburger" ? do
       backgroundColor darkText
-      
+
     ".hamburger:before" ? do
       backgroundColor darkText
-      
+
     ".hamburger:after" ? do
       backgroundColor darkText
-  
+
   ".nav-toggle:checked + .nav-toggle-label .hamburger" ? do
     transform $ rotate (deg 45)
-    
+
   ".nav-toggle:checked + .nav-toggle-label .hamburger:before" ? do
     top nil
     transform $ rotate (deg 90)
-    
+
   ".nav-toggle:checked + .nav-toggle-label .hamburger:after" ? do
     bottom nil
     transform $ rotate (deg 90)
-  
+
   -- Close button styles
   ".nav-close" ? do
     display block
@@ -355,10 +412,10 @@ hamburgerMenuStyle = do
     cursor pointer
     color dawnText
     textDecoration none
-    
+
     hover & do
       color dawnLove
-    
+
     focus & do
       outline solid (px 2) dawnPine
       outlineOffset (px 2)
@@ -406,12 +463,12 @@ mediaQuery319 = do
       mobileHeaderStyle
       position relative
       paddingRight $ Clay.rem 3.5
-    
+
     footer ? textAlign center
-    
+
     -- Mobile menu styling
     ".nav-toggle-label" ? display flex
-    
+
     nav ? do
       position fixed
       top $ Clay.rem 4
@@ -429,7 +486,6 @@ mediaQuery319 = do
       transition "visibility" (sec 0.3) ease (sec 0)
       width $ Clay.pct 100
       zIndex 100 -- Increased z-index to ensure menu appears above content
-    
     ".nav-toggle:checked ~ nav" ? do
       transform $ translateY nil
       opacity 1
@@ -437,36 +493,36 @@ mediaQuery319 = do
       borderBottomStyle solid
       borderBottomWidth (px 1)
       borderBottomColor dawnMuted
-    
+
     nav ? do
       a ? do
         display block
         lineHeight $ unitless 1.6
         paddingTop $ Clay.rem 0.5
         paddingBottom $ Clay.rem 0.5
-    
+
     ".logo" ? mobileLogoStyle
     ".logo" ? do
       a ? mobileLogoAStyle
-    
+
     ".logo-icon" ? mobileLogoIconStyle
-      
+
     ".footer-content" ? do
       flexDirection column
       alignItems center
-      
+
     ".keep-in-touch" ? do
       flexDirection column
       marginBottom $ Clay.rem 1.5
-      
+
     ".copyright" ? do
       flexDirection column
       alignItems center
-      
+
     ".hakyll-credit" ? do
       flexDirection column
       alignItems center
-      
+
     -- Dark mode adjustments for mobile menu
     query Media.screen [Media.prefersColorScheme Media.dark] $ do
       nav ? backgroundColor darkBase
@@ -479,12 +535,12 @@ mediaQuery320 = do
       mobileHeaderStyle
       position relative
       paddingRight $ Clay.rem 3.5
-    
+
     footer ? textAlign center
-    
+
     -- Mobile menu styling
     ".nav-toggle-label" ? display flex
-    
+
     nav ? do
       position fixed
       top $ Clay.rem 4
@@ -502,7 +558,6 @@ mediaQuery320 = do
       transition "visibility" (sec 0.3) ease (sec 0)
       width $ Clay.pct 100
       zIndex 100 -- Increased z-index to ensure menu appears above content
-    
     ".nav-toggle:checked ~ nav" ? do
       transform $ translateY nil
       opacity 1
@@ -510,36 +565,36 @@ mediaQuery320 = do
       borderBottomStyle solid
       borderBottomWidth (px 1)
       borderBottomColor dawnMuted
-    
+
     nav ? do
       a ? do
         display block
         lineHeight $ unitless 1.6
         paddingTop $ Clay.rem 0.5
         paddingBottom $ Clay.rem 0.5
-    
+
     ".logo" ? mobileLogoStyle
     ".logo" ? do
       a ? mobileLogoAStyle
-    
+
     ".logo-icon" ? mobileLogoIconStyle
-      
+
     ".footer-content" ? do
       flexDirection column
       alignItems center
-      
+
     ".keep-in-touch" ? do
       flexDirection column
       marginBottom $ Clay.rem 1.5
-      
+
     ".copyright" ? do
       flexDirection column
       alignItems center
-      
+
     ".hakyll-credit" ? do
       flexDirection column
       alignItems center
-      
+
     -- Dark mode adjustments for mobile menu
     query Media.screen [Media.prefersColorScheme Media.dark] $ do
       nav ? backgroundColor darkBase
@@ -569,13 +624,13 @@ mediaQuery640 = do
     -- Three-column footer layout on desktop
     footer ? do
       fontSizeRem 1.4
-    
+
     ".footer-content" ? do
       justifyContent spaceBetween
-    
+
     ".copyright" ? do
       textAlign center
-    
+
     ".hakyll-credit" ? do
       textAlign end
 
@@ -587,7 +642,7 @@ mediaQuery640 = do
       a ? do
         float floatLeft
         fontSizeRem 1.8
-    
+
     ".logo-icon" ? do
       width (Clay.rem 2.2)
       height (Clay.rem 2.2)
@@ -609,7 +664,7 @@ baseStyles = do
     transition "color" (sec 0.1) ease (sec 0)
     transition "background-color" (sec 0.1) ease (sec 0)
     transition "opacity" (sec 0.1) ease (sec 0)
-  
+
   -- Add text justification to main content
   "main p" ? do
     textAlign justify
@@ -644,7 +699,7 @@ baseStyles = do
       fontSizeRem 1.8
       fontWeight bold
       -- Removed textTransform uppercase
-      
+
       -- Enhanced focus for navigation links
       focus & do
         outline solid (px 3) transparent
@@ -657,25 +712,25 @@ baseStyles = do
     borderTopWidth (Clay.rem 0.2)
     borderTopStyle solid
     fontSizeRem 1.2
-    
+
   ".footer-content" ? do
     display flex
     flexDirection row
     justifyContent spaceBetween
     alignItems baseline
     marginBottom $ Clay.rem 2
-    
+
   ".keep-in-touch" ? do
     display flex
     flexDirection row
     alignItems center
-    
+
     h3 ? do
       fontSizeRem 1.4
       marginRight $ Clay.rem 1
       fontWeight $ weight 600
       marginBottom nil
-    
+
     ul ? do
       listStyleType none
       paddingLeft nil
@@ -683,13 +738,13 @@ baseStyles = do
       flexDirection row
       marginBottom nil
       alignItems center
-      
+
       li ? do
         marginBottom nil
         marginRight $ Clay.rem 1.5
         display flex
         alignItems center
-    
+
     -- Skip link that overrides sr-only when focused
     ".skip-link" ? do
       focus & do
@@ -705,36 +760,35 @@ baseStyles = do
         display block
         fontWeight bold
         textDecoration none
-        
-      
+
     ".social-icon" ? do
       width $ Clay.rem 1.6
       height $ Clay.rem 1.6
       color inherit
       display inlineBlock
       verticalAlign middle
-      
+
       hover & do
         color dawnRose
-    
+
     -- Focus indicator for social icon parent links
     ".keep-in-touch ul li a" ? do
       focus & do
         outline solid (px 2) transparent
         outlineOffset (px 2)
         borderRadius (px 4) (px 4) (px 4) (px 4)
-  
+
   ".copyright" ? do
     fontStyle italic
     fontWeight $ weight 400
-    
+
     p ? do
       marginBottom nil
 
   ".hakyll-credit" ? do
     fontStyle italic
     fontWeight $ weight 400
-    
+
     p ? do
       marginBottom nil
 
@@ -755,28 +809,28 @@ baseStyles = do
   -- Note-specific styling
   ".note" ? do
     marginBottom (Clay.rem 2)
-    
+
     ".note-header" ? do
       marginBottom (Clay.rem 1.5)
       paddingBottom (Clay.rem 1)
       borderBottomWidth (px 1)
       borderBottomStyle solid
-    
+
     ".note-title" ? do
       fontSizeRem 2
       marginBottom (Clay.rem 0.5)
       fontWeight $ weight 600
-    
+
     ".note-date" ? do
       fontSizeRem 1.2
       fontStyle italic
       display block
       marginBottom (Clay.rem 0.5)
-    
+
     ".note-tags" ? do
       display flex
       "flex-wrap" -: "wrap"
-    
+
     ".note-tag" ? do
       fontSizeRem 1.1
       paddingTop (Clay.rem 0.25)
@@ -789,53 +843,53 @@ baseStyles = do
       fontWeight $ weight 500
       textDecoration none
       display inlineBlock
-      
+
       hover & do
         textDecoration none
         opacity 0.8
-    
+
     ".note-content" ? do
       lineHeight $ unitless 1.6
-  
+
   -- Notes listing (for archive pages)
   ".notes-list" ? do
     marginTop (Clay.rem 2)
-    
+
     ".note-listing" ? do
       marginBottom (Clay.rem 2)
       paddingBottom (Clay.rem 1.5)
       borderBottomWidth (px 1)
       borderBottomStyle solid
-      
+
       "h2" ? do
         marginBottom (Clay.rem 0.5)
         fontSizeRem 1.8
-        
+
         "a" ? do
           textDecoration none
-          
+
           hover & do
             textDecoration underline
-      
+
       ".note-date" ? do
         fontSize (Clay.rem 1.2)
         fontStyle italic
         display block
         marginBottom (Clay.rem 0.5)
-      
+
       ".note-tags" ? do
         marginTop (Clay.rem 0.5)
-  
+
   -- Tag cloud styling
   ".tag-cloud" ? do
     marginTop (Clay.rem 2)
     marginBottom (Clay.rem 3)
     textAlign center
     lineHeight $ unitless 1.8
-    
+
     "nav" ? do
       display block
-      
+
     ".tag-list" ? do
       listStyleType none
       paddingLeft nil
@@ -844,11 +898,11 @@ baseStyles = do
       justifyContent center
       alignItems center
       marginBottom nil
-      
+
       "li" ? do
         display inlineBlock
         marginBottom nil
-    
+
     "a" ? do
       display inlineBlock
       margin (Clay.rem 0.3) (Clay.rem 0.5) (Clay.rem 0.3) (Clay.rem 0.5)
@@ -857,27 +911,27 @@ baseStyles = do
       borderRadius (px 20) (px 20) (px 20) (px 20)
       fontWeight $ weight 500
       transition "all" (sec 0.2) ease (sec 0)
-      
+
       hover & do
         textDecoration none
         opacity 0.8
-  
+
   -- Breadcrumbs styling
   ".breadcrumbs" ? do
     marginBottom (Clay.rem 1.5)
     fontSize (Clay.rem 1.4)
-    
+
     ".breadcrumb-link" ? do
       textDecoration none
       fontWeight $ weight 500
-      
+
       hover & do
         textDecoration underline
-    
+
     ".breadcrumb-separator" ? do
       margin (Clay.rem 0) (Clay.rem 0.5) (Clay.rem 0) (Clay.rem 0.5)
       opacity 0.6
-  
+
   ".breadcrumbs-bottom" ? do
     marginTop (Clay.rem 2)
     marginBottom (Clay.rem 1)
@@ -886,7 +940,7 @@ baseStyles = do
     textDecoration underline
     -- Using the standard text-decoration property only
     -- Clay 0.16.0 doesn't support newer CSS text decoration properties
-    
+
     -- Focus indicator for keyboard navigation
     focus & do
       outline solid (px 2) transparent
@@ -898,13 +952,13 @@ baseStyles = do
       textDecoration none
       display flex
       alignItems center
-      
+
       -- Logo focus indicator
       focus & do
         outline solid (px 3) transparent
         outlineOffset (px 3)
         borderRadius (px 4) (px 4) (px 4) (px 4)
-  
+
   ".logo-icon" ? do
     width (Clay.rem 2)
     height (Clay.rem 2)
@@ -923,7 +977,7 @@ baseStyles = do
   pre ? do
     padding (Clay.rem 1) (Clay.rem 1) (Clay.rem 1) (Clay.rem 1)
     overflowX auto
-    
+
     Clay.code ? do
       padding nil nil nil nil
       backgroundColor transparent
@@ -937,11 +991,11 @@ baseStyles = do
   -- Notes navigation list styling (overrides general list styles)
   "nav[aria-label=\"List of all notes\"]" ? do
     textAlign $ alignSide sideLeft
-    
+
     "ul" ? do
       listStyleType none
       paddingLeft nil
-      
+
       "li" ? do
         marginBottom (Clay.rem 0.8)
         display block
@@ -951,13 +1005,13 @@ baseStyles = do
   ul ? do
     paddingLeft (Clay.rem 2)
     listStyleType disc
-    
+
     li ? do
       marginBottom (Clay.rem 0.5)
-  
+
   ol ? do
     paddingLeft (Clay.rem 2)
-    
+
     li ? do
       marginBottom (Clay.rem 0.5)
 
@@ -966,15 +1020,15 @@ baseStyles = do
     width (pct 100)
     borderCollapse collapse
     marginBottom (Clay.rem 1.5)
-    
+
     thead ? do
       borderBottomWidth (px 2)
       borderBottomStyle solid
-      
+
       th ? do
         paddingBottom (Clay.rem 0.5)
         textAlign $ alignSide sideLeft
-    
+
     td ? do
       padding (Clay.rem 0.5) (Clay.rem 0.5) (Clay.rem 0.5) nil
       borderBottomWidth (px 1)
@@ -987,24 +1041,24 @@ lightModeStyles = do
     body ? do
       color dawnText
       backgroundColor dawnBase
-    
+
     header ? borderBottomColor dawnMuted
-    
+
     nav ? do
       a ? do
         color dawnPine
         hover & color dawnRose
-    
+
     footer ? do
       borderTopColor dawnMuted
       color dawnMuted
-    
+
     h1 ? color dawnLove
     h2 ? color dawnIris
-    
+
     article ? do
       ".header" ? color dawnSubtle
-    
+
     a ? do
       color dawnPine
       hover & do
@@ -1012,75 +1066,75 @@ lightModeStyles = do
 
     ".keep-in-touch ul li a" ? do
       textDecoration none
-    
+
     ".logo" ? do
       a ? do
         color dawnText
         hover & color dawnLove
-    
+
     Clay.code ? backgroundColor dawnOverlay
     pre ? backgroundColor dawnOverlay
-    
+
     blockquote ? do
       borderLeftColor dawnMuted
       color dawnSubtle
-    
+
     table ? do
       thead ? borderBottomColor dawnMuted
       td ? borderBottomColor dawnMuted
-    
+
     -- Focus indicators for light mode
     a ? do
       focus & do
         outline solid (px 2) dawnPine
-    
+
     -- Navigation focus indicators for light mode
     nav ? do
       a ? do
         focus & do
           outline solid (px 3) dawnPine
-    
+
     -- Note colors for light mode
     ".note" ? do
       ".note-header" ? do
         borderBottomColor dawnMuted
-      
+
       ".note-title" ? do
         color dawnLove
-      
+
       ".note-date" ? do
         color dawnSubtle
-      
+
       ".note-tag" ? do
         backgroundColor dawnOverlay
         color dawnPine
-    
+
     -- Breadcrumb colors for light mode
     ".breadcrumbs" ? do
       ".breadcrumb-link" ? do
         color dawnFoam
-        
+
         hover & do
           color dawnIris
-    
+
     -- Notes listing colors for light mode
     ".notes-list" ? do
       ".note-listing" ? do
         borderBottomColor dawnMuted
-        
+
         "h2" ? do
           "a" ? do
             color dawnLove
-            
+
             hover & do
               color dawnRose
-    
+
     -- Tag cloud colors for light mode
     ".tag-cloud" ? do
       "a" ? do
         backgroundColor dawnOverlay
         color dawnPine
-        
+
         hover & do
           backgroundColor dawnMuted
           color dawnText
@@ -1092,24 +1146,24 @@ fallbackStyles = do
   body ? do
     color dawnText
     backgroundColor dawnBase
-  
+
   header ? borderBottomColor dawnMuted
-  
+
   nav ? do
     a ? do
       color dawnPine
       hover & color dawnRose
-  
+
   footer ? do
     borderTopColor dawnMuted
     color dawnMuted
-  
+
   h1 ? color dawnLove
   h2 ? color dawnIris
-  
+
   article ? do
     ".header" ? color dawnSubtle
-  
+
   a ? do
     color dawnPine
     hover & do
@@ -1117,75 +1171,75 @@ fallbackStyles = do
 
   ".keep-in-touch ul li a" ? do
     textDecoration none
-  
+
   ".logo" ? do
     a ? do
       color dawnText
       hover & color dawnLove
-  
+
   Clay.code ? backgroundColor dawnOverlay
   pre ? backgroundColor dawnOverlay
-  
+
   blockquote ? do
     borderLeftColor dawnMuted
     color dawnSubtle
-  
+
   table ? do
     thead ? borderBottomColor dawnMuted
     td ? borderBottomColor dawnMuted
-  
+
   -- Fallback focus indicators
   a ? do
     focus & do
       outline solid (px 2) dawnPine
-  
+
   -- Fallback navigation focus indicators
   nav ? do
     a ? do
       focus & do
         outline solid (px 3) dawnPine
-  
+
   -- Note colors for fallback
   ".note" ? do
     ".note-header" ? do
       borderBottomColor dawnMuted
-    
+
     ".note-title" ? do
       color dawnLove
-    
+
     ".note-date" ? do
       color dawnSubtle
-    
+
     ".note-tag" ? do
       backgroundColor dawnOverlay
       color dawnPine
-  
+
   -- Breadcrumb colors for fallback
   ".breadcrumbs" ? do
     ".breadcrumb-link" ? do
       color dawnFoam
-      
+
       hover & do
         color dawnIris
-  
+
   -- Notes listing colors for fallback
   ".notes-list" ? do
     ".note-listing" ? do
       borderBottomColor dawnMuted
-      
+
       "h2" ? do
         "a" ? do
           color dawnLove
-          
+
           hover & do
             color dawnRose
-  
+
   -- Tag cloud colors for fallback
   ".tag-cloud" ? do
     "a" ? do
       backgroundColor dawnOverlay
       color dawnPine
-      
+
       hover & do
         backgroundColor dawnMuted
         color dawnText
@@ -1193,10 +1247,10 @@ fallbackStyles = do
 main :: IO ()
 main = putCss $ do
   generateFontCSS
-  baseStyles     -- Structure without colors
+  baseStyles -- Structure without colors
   fallbackStyles -- Light theme fallback for browsers without prefers-color-scheme
   lightModeStyles -- Light theme media query
-  darkModeStyles  -- Dark theme media query
+  darkModeStyles -- Dark theme media query
   hamburgerMenuStyle -- Hamburger menu CSS
   reducedMotionStyles -- Reduced motion preferences
   mediaQuery319
