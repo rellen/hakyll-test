@@ -1,19 +1,21 @@
 --------------------------------------------------------------------------------
 {-# LANGUAGE OverloadedStrings #-}
 
-module Site.Context 
-  ( getCopyrightYears
-  , copyrightCtx
-  , tagsCtx
-  , postCtx
-  , noteCtx
-  , getNoteTags
-  , renderNoteTagCloud
-  ) where
+module Site.Context
+  ( getCopyrightYears,
+    copyrightCtx,
+    tagsCtx,
+    postCtx,
+    noteCtx,
+    getNoteTags,
+    renderNoteTagCloud,
+  )
+where
 
-import Hakyll
-import Data.Time.Clock (getCurrentTime, utctDay)
+import Data.Bifunctor (second)
 import Data.Time.Calendar (toGregorian)
+import Data.Time.Clock (getCurrentTime, utctDay)
+import Hakyll
 import Site.Util (splitOnComma, urlEncode)
 
 --------------------------------------------------------------------------------
@@ -29,11 +31,10 @@ getCopyrightYears = do
 -- Create a context with the copyright years
 copyrightCtx :: IO (Context String)
 copyrightCtx = do
-  years <- getCopyrightYears
-  return $ constField "copyright" years
+  constField "copyright" <$> getCopyrightYears
 
 -- Custom tag extractor for comma-separated tags
-getNoteTags :: MonadMetadata m => Identifier -> m [String]
+getNoteTags :: (MonadMetadata m) => Identifier -> m [String]
 getNoteTags identifier = do
   metadata <- getMetadata identifier
   case lookupString "tags" metadata of
@@ -54,24 +55,25 @@ tagsCtx = field "tags" $ \item -> do
 -- Custom tag cloud renderer for note tags
 renderNoteTagCloud :: Double -> Double -> Tags -> Compiler String
 renderNoteTagCloud minSize maxSize tags = do
-  let tagCounts = map (\(tag, identifiers) -> (tag, length identifiers)) $ tagsMap tags
-  
+  let tagCounts = map (second length) $ tagsMap tags
+
   if null tagCounts
     then return ""
     else do
       let minCount = fromIntegral $ minimum $ map snd tagCounts
           maxCount = fromIntegral $ maximum $ map snd tagCounts
           sizeRange = if maxCount == minCount then 0 else maxSize - minSize
-          
-      let renderTag (tag, count) = 
-            let size = if sizeRange == 0 
-                      then minSize 
-                      else minSize + (fromIntegral count - minCount) / (maxCount - minCount) * sizeRange
+
+      let renderTag (tag, count) =
+            let size =
+                  if sizeRange == 0
+                    then minSize
+                    else minSize + (fromIntegral count - minCount) / (maxCount - minCount) * sizeRange
                 sizeEm = size
                 noteCount = show count
                 plural = if count == 1 then "note" else "notes"
-            in "<li><a href=\"/note-tags/" ++ urlEncode tag ++ ".html\" style=\"font-size: " ++ show sizeEm ++ "em\" aria-label=\"View " ++ noteCount ++ " " ++ plural ++ " tagged with " ++ tag ++ "\">" ++ tag ++ "</a></li>"
-            
+             in "<li><a href=\"/note-tags/" ++ urlEncode tag ++ ".html\" style=\"font-size: " ++ show sizeEm ++ "em\" aria-label=\"View " ++ noteCount ++ " " ++ plural ++ " tagged with " ++ tag ++ "\">" ++ tag ++ "</a></li>"
+
       let tagItems = unlines $ map renderTag tagCounts
       return $ "<nav aria-label=\"Browse notes by tag\">\n  <ul class=\"tag-list\">\n" ++ tagItems ++ "  </ul>\n</nav>"
 

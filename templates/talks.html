@@ -12,13 +12,10 @@
         <span class="talk-date">$date$</span>
       </div>
     </header>
-    
-    <div class="talk-description">
-      $description$
-    </div>
-    
-    $if(hasVideo)$
-    $if(hasSlides)$
+
+    <div class="talk-description">$description$</div>
+
+    $if(hasVideo)$ $if(hasSlides)$
     <div class="talk-links">
       <a href="$videoUrl$" class="talk-link video-link" target="_blank" rel="noopener">
         <span class="link-icon">▶</span>
@@ -36,17 +33,14 @@
         Watch Video
       </a>
     </div>
-    $endif$
-    $else$
-    $if(hasSlides)$
+    $endif$ $else$ $if(hasSlides)$
     <div class="talk-links">
       <a href="$slidesUrl$" class="talk-link slides-link" target="_blank" rel="noopener">
         <span class="link-icon">📖</span>
         View Slides
       </a>
     </div>
-    $endif$
-    $endif$
+    $endif$ $endif$
   </article>
   $endfor$
 </section>

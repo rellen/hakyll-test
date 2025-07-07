@@ -1,81 +1,69 @@
+{-# LANGUAGE DeriveGeneric #-}
 --------------------------------------------------------------------------------
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE DeriveGeneric #-}
 
-module Site.Talks 
-  ( Talk(..)
-  , loadTalks
-  , talksContext
-  ) where
+module Site.Talks
+  ( Talk (..),
+    loadTalks,
+    talksContext,
+  )
+where
 
-import Hakyll
-import GHC.Generics
-import Data.Aeson
 import Data.Maybe (fromMaybe)
-import qualified Data.ByteString.Lazy as L
-import Text.Pandoc (runPure, readMarkdown, writeHtml5String, def)
-import Text.Pandoc.Error (PandocError)
 import qualified Data.Text as T
+import qualified Dhall
+import GHC.Generics
+import Hakyll
+import Numeric.Natural (Natural)
+import Text.Pandoc (def, readMarkdown, runPure, writeHtml5String)
+import Text.Pandoc.Error (PandocError)
 
 --------------------------------------------------------------------------------
 -- Talk data structure
 data Talk = Talk
-  { talkTitle :: String
-  , talkDescription :: String  -- Markdown content
-  , talkOrganisation :: String
-  , talkYear :: Int
-  , talkMonth :: Int
-  , talkVideoUrl :: Maybe String
-  , talkSlidesUrl :: Maybe String
-  } deriving (Generic, Show)
+  { title :: T.Text,
+    description :: T.Text, -- Markdown content
+    organisation :: T.Text,
+    year :: Natural,
+    month :: Natural,
+    video :: Maybe T.Text,
+    slides :: Maybe T.Text
+  }
+  deriving (Generic, Show)
 
-instance FromJSON Talk where
-  parseJSON = withObject "Talk" $ \o -> Talk
-    <$> o .: "title"
-    <*> o .: "description"
-    <*> o .: "organisation"
-    <*> o .: "year"
-    <*> o .: "month"
-    <*> o .:? "videoUrl"
-    <*> o .:? "slidesUrl"
-
-instance ToJSON Talk
+instance Dhall.FromDhall Talk
 
 --------------------------------------------------------------------------------
--- Load talks from JSON file
+-- Load talks from Dhall file
 loadTalks :: FilePath -> IO [Talk]
 loadTalks filePath = do
-  jsonData <- L.readFile filePath
-  case eitherDecode jsonData of
-    Left err -> do
-      putStrLn $ "Error parsing talks JSON: " ++ err
-      return []
-    Right talks -> return talks
+  Dhall.inputFile (Dhall.list Dhall.auto) filePath
 
 -- Convert markdown to HTML
-markdownToHtml :: String -> String
-markdownToHtml markdown = 
-  case runPure (readMarkdown def (T.pack markdown) >>= writeHtml5String def) of
-    Left _ -> markdown  -- Fallback to original text if parsing fails
+markdownToHtml :: T.Text -> String
+markdownToHtml markdown =
+  case runPure (readMarkdown def markdown >>= writeHtml5String def) of
+    Left _ -> T.unpack markdown -- Fallback to original text if parsing fails
     Right html -> T.unpack html
 
 -- Create a context for a single talk
 talkContext :: Talk -> Context String
-talkContext talk = mconcat
-  [ constField "title" (talkTitle talk)
-  , constField "description" (markdownToHtml $ talkDescription talk)
-  , constField "organisation" (talkOrganisation talk)
-  , constField "year" (show $ talkYear talk)
-  , constField "month" (show $ talkMonth talk)
-  , constField "date" (formatDate (talkYear talk) (talkMonth talk))
-  , constField "videoUrl" (fromMaybe "" $ talkVideoUrl talk)
-  , constField "slidesUrl" (fromMaybe "" $ talkSlidesUrl talk)
-  , constField "hasVideo" (if null (fromMaybe "" $ talkVideoUrl talk) then "false" else "true")
-  , constField "hasSlides" (if null (fromMaybe "" $ talkSlidesUrl talk) then "false" else "true")
-  ]
+talkContext talk =
+  mconcat
+    [ constField "title" (T.unpack $ title talk),
+      constField "description" (markdownToHtml $ description talk),
+      constField "organisation" (T.unpack $ organisation talk),
+      constField "year" (show $ year talk),
+      constField "month" (show $ month talk),
+      constField "date" (formatDate (year talk) (month talk)),
+      constField "videoUrl" (T.unpack $ fromMaybe T.empty $ video talk),
+      constField "slidesUrl" (T.unpack $ fromMaybe T.empty $ slides talk),
+      constField "hasVideo" (if T.null (fromMaybe T.empty $ video talk) then "false" else "true"),
+      constField "hasSlides" (if T.null (fromMaybe T.empty $ slides talk) then "false" else "true")
+    ]
 
 -- Format date for display
-formatDate :: Int -> Int -> String
+formatDate :: Natural -> Natural -> String
 formatDate year month = monthName month ++ " " ++ show year
   where
     monthName 1 = "January"
@@ -96,15 +84,16 @@ formatDate year month = monthName month ++ " " ++ show year
 talksContext :: [Talk] -> Context String
 talksContext talks = listField "talks" talkItemContext (mapM makeItem talks)
   where
-    talkItemContext = mconcat
-      [ field "title" (return . talkTitle . itemBody)
-      , field "description" (return . markdownToHtml . talkDescription . itemBody)
-      , field "organisation" (return . talkOrganisation . itemBody)
-      , field "year" (return . show . talkYear . itemBody)
-      , field "month" (return . show . talkMonth . itemBody)
-      , field "date" (\item -> return $ formatDate (talkYear $ itemBody item) (talkMonth $ itemBody item))
-      , field "videoUrl" (return . fromMaybe "" . talkVideoUrl . itemBody)
-      , field "slidesUrl" (return . fromMaybe "" . talkSlidesUrl . itemBody)
-      , field "hasVideo" (\item -> return $ if null (fromMaybe "" $ talkVideoUrl $ itemBody item) then "false" else "true")
-      , field "hasSlides" (\item -> return $ if null (fromMaybe "" $ talkSlidesUrl $ itemBody item) then "false" else "true")
-      ]
+    talkItemContext =
+      mconcat
+        [ field "title" (return . T.unpack . title . itemBody),
+          field "description" (return . markdownToHtml . description . itemBody),
+          field "organisation" (return . T.unpack . organisation . itemBody),
+          field "year" (return . show . year . itemBody),
+          field "month" (return . show . month . itemBody),
+          field "date" (\item -> return $ formatDate (year $ itemBody item) (month $ itemBody item)),
+          field "videoUrl" (return . T.unpack . fromMaybe T.empty . video . itemBody),
+          field "slidesUrl" (return . T.unpack . fromMaybe T.empty . slides . itemBody),
+          field "hasVideo" (\item -> return $ if T.null (fromMaybe T.empty $ video $ itemBody item) then "false" else "true"),
+          field "hasSlides" (\item -> return $ if T.null (fromMaybe T.empty $ slides $ itemBody item) then "false" else "true")
+        ]

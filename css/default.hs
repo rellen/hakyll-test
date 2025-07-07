@@ -240,18 +240,18 @@ darkModeStyles = do
     ".talks-list" ? do
       ".talk" ? do
         borderBottomColor darkMuted
-        
+
       ".video-link" ? do
         backgroundColor darkFoam
         color darkBase
-        
+
         hover & do
           backgroundColor darkPine
-        
+
       ".slides-link" ? do
-        backgroundColor darkIris  
+        backgroundColor darkIris
         color darkBase
-        
+
         hover & do
           backgroundColor darkLove
 
@@ -958,49 +958,49 @@ baseStyles = do
   -- Talks styling
   ".talks-list" ? do
     marginTop (Clay.rem 2)
-    
+
     ".talk" ? do
       marginBottom (Clay.rem 3)
       paddingBottom (Clay.rem 2)
       borderBottomStyle solid
       borderBottomWidth (px 1)
       borderBottomColor "#e5e5e5"
-      
+
       ".talk-header" ? do
         marginBottom (Clay.rem 1)
-        
+
         ".talk-title" ? do
           fontSize (Clay.rem 1.8)
           fontWeight $ weight 600
           marginBottom (Clay.rem 0.5)
           lineHeight $ unitless 1.3
-        
+
         ".talk-meta" ? do
           display flex
           "flex-wrap" -: "wrap"
           alignItems center
           fontSize (Clay.rem 1.4)
-          gap (Clay.rem 1)
-          
+          "gap" -: "1rem"
+
           ".talk-organisation" ? do
             fontWeight $ weight 500
-            
+
           ".talk-date" ? do
             fontStyle italic
             opacity 0.8
-      
+
       ".talk-description" ? do
         marginBottom (Clay.rem 1.5)
         lineHeight $ unitless 1.6
-        
+
         "p:last-child" ? do
           marginBottom nil
-      
+
       ".talk-links" ? do
         display flex
-        gap (Clay.rem 1)
+        "gap" -: "1rem"
         "flex-wrap" -: "wrap"
-        
+
         ".talk-link" ? do
           display inlineBlock
           padding (Clay.rem 0.5) (Clay.rem 1) (Clay.rem 0.5) (Clay.rem 1)
@@ -1009,10 +1009,10 @@ baseStyles = do
           fontWeight $ weight 500
           fontSize (Clay.rem 1.4)
           transition "all" (sec 0.2) ease (sec 0)
-          
+
           ".link-icon" ? do
             marginRight (Clay.rem 0.5)
-          
+
           hover & do
             textDecoration none
 
@@ -1201,18 +1201,18 @@ lightModeStyles = do
     ".talks-list" ? do
       ".talk" ? do
         borderBottomColor dawnMuted
-        
+
       ".video-link" ? do
         backgroundColor dawnFoam
         color dawnBase
-        
+
         hover & do
           backgroundColor dawnPine
-        
+
       ".slides-link" ? do
-        backgroundColor dawnIris  
+        backgroundColor dawnIris
         color dawnBase
-        
+
         hover & do
           backgroundColor dawnLove
 
@@ -1325,18 +1325,18 @@ fallbackStyles = do
   ".talks-list" ? do
     ".talk" ? do
       borderBottomColor dawnMuted
-      
+
     ".video-link" ? do
       backgroundColor dawnFoam
       color dawnBase
-      
+
       hover & do
         backgroundColor dawnPine
-      
+
     ".slides-link" ? do
-      backgroundColor dawnIris  
+      backgroundColor dawnIris
       color dawnBase
-      
+
       hover & do
         backgroundColor dawnLove
 

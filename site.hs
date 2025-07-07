@@ -7,8 +7,8 @@ import Hakyll
 
 import Site.Context (copyrightCtx, getNoteTags, noteCtx, postCtx, renderNoteTagCloud)
 import Site.Favicon (generateFaviconRules)
-import Site.Util (applyTemplateChain)
 import Site.Talks (loadTalks, talksContext)
+import Site.Util (applyTemplateChain)
 
 --------------------------------------------------------------------------------
 main :: IO ()
@@ -52,7 +52,7 @@ main = do
     create ["talks.html"] $ do
       route idRoute
       compile $ do
-        talks <- unsafeCompiler $ loadTalks "data/talks.json"
+        talks <- unsafeCompiler $ loadTalks "data/talks.dhall"
         let talksPageCtx =
               talksContext talks
                 `mappend` constField "title" "Talks"
@@ -108,10 +108,11 @@ main = do
         makeItem ""
           >>= applyTemplateChain [("templates/notes-archive.html", notesArchiveCtx), ("templates/default.html", notesArchiveCtx)]
           >>= relativizeUrls
-    tagsRules tags $ \tag pattern -> do
+
+    tagsRules tags $ \tag notePattern -> do
       route idRoute
       compile $ do
-        notes <- loadAll pattern
+        notes <- loadAll notePattern
         let tagCtx =
               constField "tag" tag
                 `mappend` listField "notes" noteCtx (return notes)
