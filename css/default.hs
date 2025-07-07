@@ -153,10 +153,10 @@ darkModeStyles = do
 
     header ? borderBottomColor darkMuted
 
-    nav ? do
-      a ? do
-        color darkFoam
-        hover & color darkIris
+    -- Navigation links
+    ".nav-link" ? do
+      color darkIris
+      hover & color darkLove
 
     footer ? do
       borderTopColor darkMuted
@@ -164,6 +164,8 @@ darkModeStyles = do
 
     h1 ? color darkLove
     h2 ? color darkIris
+    h3 ? color darkGold
+    h4 ? color darkRose
 
     article ? do
       ".header" ? color darkSubtle
@@ -172,6 +174,14 @@ darkModeStyles = do
       color darkFoam
       hover & do
         color darkIris
+
+    -- Primary button styling for dark mode
+    ".btn-primary" ? do
+      backgroundColor darkLove
+      color darkBase
+      hover & do
+        backgroundColor darkRose
+        color darkBase
 
     ".keep-in-touch ul li a" ? do
       textDecoration none
@@ -198,10 +208,9 @@ darkModeStyles = do
         outline solid (px 2) darkFoam
 
     -- Navigation focus indicators for dark mode
-    nav ? do
-      a ? do
-        focus & do
-          outline solid (px 3) darkFoam
+    ".nav-link" ? do
+      focus & do
+        outline solid (px 3) darkIris
 
     -- Close button dark mode styles
     ".nav-close" ? do
@@ -226,7 +235,7 @@ darkModeStyles = do
 
       ".note-tag" ? do
         backgroundColor darkOverlay
-        color darkFoam
+        color darkSubtle
 
     -- Breadcrumb colors for dark mode
     ".breadcrumbs" ? do
@@ -262,16 +271,34 @@ darkModeStyles = do
 
         "h2" ? do
           "a" ? do
-            color darkLove
+            color darkIris
+            fontWeight $ weight 600
 
             hover & do
-              color darkIris
+              color darkLove
+
+        ".note-tag" ? do
+          color darkGold  -- Gold for note listing tags, distinct from titles
+    
+    -- Also target the actual notes page structure
+    "nav[aria-label=\"List of all notes\"]" ? do
+      ".note-listing" ? do
+        "h2" ? do
+          "a" ? do
+            color darkIris  -- Iris purple for note titles, distinct from nav
+            fontWeight $ weight 600
+            
+            hover & do
+              color darkLove
+        ".note-tag" ? do
+          color darkGold  -- Gold for note listing tags, distinct from titles
 
     -- Tag cloud colors for dark mode
     ".tag-cloud" ? do
       "a" ? do
         backgroundColor darkOverlay
         color darkFoam
+        fontWeight $ weight 500
 
         hover & do
           backgroundColor darkMuted
@@ -513,12 +540,11 @@ mediaQuery319 = do
       borderBottomWidth (px 1)
       borderBottomColor dawnMuted
 
-    nav ? do
-      a ? do
-        display block
-        lineHeight $ unitless 1.6
-        paddingTop $ Clay.rem 0.5
-        paddingBottom $ Clay.rem 0.5
+    ".nav-link" ? do
+      display block
+      lineHeight $ unitless 1.6
+      paddingTop $ Clay.rem 0.5
+      paddingBottom $ Clay.rem 0.5
 
     ".logo" ? mobileLogoStyle
     ".logo" ? do
@@ -585,12 +611,11 @@ mediaQuery320 = do
       borderBottomWidth (px 1)
       borderBottomColor dawnMuted
 
-    nav ? do
-      a ? do
-        display block
-        lineHeight $ unitless 1.6
-        paddingTop $ Clay.rem 0.5
-        paddingBottom $ Clay.rem 0.5
+    ".nav-link" ? do
+      display block
+      lineHeight $ unitless 1.6
+      paddingTop $ Clay.rem 0.5
+      paddingBottom $ Clay.rem 0.5
 
     ".logo" ? mobileLogoStyle
     ".logo" ? do
@@ -635,10 +660,9 @@ mediaQuery640 = do
       margin nil nil nil nil
       textAlign end
 
-    nav ? do
-      a ? do
-        margin nil nil nil (Clay.rem 1.2)
-        display inline
+    ".nav-link" ? do
+      margin nil nil nil (Clay.rem 1.2)
+      display inline
 
     -- Three-column footer layout on desktop
     footer ? do
@@ -713,16 +737,16 @@ baseStyles = do
   nav ? do
     textAlign end
 
-  nav ? do
-    a ? do
-      fontSizeRem 1.8
-      fontWeight bold
-      -- Removed textTransform uppercase
-
-      -- Enhanced focus for navigation links
-      focus & do
-        outline solid (px 3) transparent
-        outlineOffset (px 3)
+  -- Navigation links
+  ".nav-link" ? do
+    fontSizeRem 1.8
+    fontWeight bold
+    textDecoration none
+    
+    -- Enhanced focus for navigation links
+    focus & do
+      outline solid (px 3) transparent
+      outlineOffset (px 3)
 
   footer ? do
     marginTop $ Clay.rem 3
@@ -819,6 +843,18 @@ baseStyles = do
     fontSizeRem 2
     marginTop (Clay.rem 2.5)
     marginBottom (Clay.rem 1.5)
+
+  h3 ? do
+    fontSizeRem 1.8
+    marginTop (Clay.rem 2)
+    marginBottom (Clay.rem 1.2)
+    fontWeight $ weight 600
+
+  h4 ? do
+    fontSizeRem 1.6
+    marginTop (Clay.rem 1.5)
+    marginBottom (Clay.rem 1)
+    fontWeight $ weight 600
 
   article ? do
     ".header" ? do
@@ -930,6 +966,12 @@ baseStyles = do
 
       ".note-tags" ? do
         marginTop (Clay.rem 0.5)
+
+      ".note-tag" ? do
+        paddingTop (Clay.rem 0.2)
+        paddingRight (Clay.rem 0.4)
+        paddingBottom (Clay.rem 0.2)
+        paddingLeft (Clay.rem 0.4)
 
   -- Tag cloud styling
   ".tag-cloud" ? do
@@ -1156,10 +1198,10 @@ lightModeStyles = do
 
     header ? borderBottomColor dawnMuted
 
-    nav ? do
-      a ? do
-        color dawnPine
-        hover & color dawnRose
+    -- Navigation links
+    ".nav-link" ? do
+      color dawnIris
+      hover & color dawnLove
 
     footer ? do
       borderTopColor dawnMuted
@@ -1167,6 +1209,8 @@ lightModeStyles = do
 
     h1 ? color dawnLove
     h2 ? color dawnIris
+    h3 ? color dawnGold
+    h4 ? color dawnRose
 
     article ? do
       ".header" ? color dawnSubtle
@@ -1175,6 +1219,14 @@ lightModeStyles = do
       color dawnPine
       hover & do
         color dawnRose
+
+    -- Primary button styling for light mode
+    ".btn-primary" ? do
+      backgroundColor dawnLove
+      color dawnBase
+      hover & do
+        backgroundColor dawnRose
+        color dawnBase
 
     ".keep-in-touch ul li a" ? do
       textDecoration none
@@ -1201,10 +1253,9 @@ lightModeStyles = do
         outline solid (px 2) dawnPine
 
     -- Navigation focus indicators for light mode
-    nav ? do
-      a ? do
-        focus & do
-          outline solid (px 3) dawnPine
+    ".nav-link" ? do
+      focus & do
+        outline solid (px 3) dawnPine
 
     -- Note colors for light mode
     ".note" ? do
@@ -1219,7 +1270,7 @@ lightModeStyles = do
 
       ".note-tag" ? do
         backgroundColor dawnOverlay
-        color dawnPine
+        color dawnSubtle
 
     -- Breadcrumb colors for light mode
     ".breadcrumbs" ? do
@@ -1255,16 +1306,34 @@ lightModeStyles = do
 
         "h2" ? do
           "a" ? do
-            color dawnLove
+            color dawnIris
+            fontWeight $ weight 600
 
             hover & do
-              color dawnRose
+              color dawnLove
+
+        ".note-tag" ? do
+          color dawnGold  -- Gold for note listing tags, distinct from titles
+    
+    -- Also target the actual notes page structure
+    "nav[aria-label=\"List of all notes\"]" ? do
+      ".note-listing" ? do
+        "h2" ? do
+          "a" ? do
+            color dawnIris  -- Iris purple for note titles, distinct from nav
+            fontWeight $ weight 600
+            
+            hover & do
+              color dawnLove
+        ".note-tag" ? do
+          color dawnGold  -- Gold for note listing tags, distinct from titles
 
     -- Tag cloud colors for light mode
     ".tag-cloud" ? do
       "a" ? do
         backgroundColor dawnOverlay
         color dawnPine
+        fontWeight $ weight 500
 
         hover & do
           backgroundColor dawnMuted
@@ -1280,10 +1349,10 @@ fallbackStyles = do
 
   header ? borderBottomColor dawnMuted
 
-  nav ? do
-    a ? do
-      color dawnPine
-      hover & color dawnRose
+  -- Navigation links for fallback
+  ".nav-link" ? do
+    color dawnIris
+    hover & color dawnLove
 
   footer ? do
     borderTopColor dawnMuted
@@ -1291,6 +1360,8 @@ fallbackStyles = do
 
   h1 ? color dawnLove
   h2 ? color dawnIris
+  h3 ? color dawnGold
+  h4 ? color dawnRose
 
   article ? do
     ".header" ? color dawnSubtle
@@ -1299,6 +1370,21 @@ fallbackStyles = do
     color dawnPine
     hover & do
       color dawnRose
+
+  -- Primary button/CTA styling
+  ".btn-primary" ? do
+    backgroundColor dawnLove
+    color dawnBase
+    padding (Clay.rem 0.75) (Clay.rem 1.5) (Clay.rem 0.75) (Clay.rem 1.5)
+    borderRadius (px 6) (px 6) (px 6) (px 6)
+    textDecoration none
+    fontWeight $ weight 600
+    display inlineBlock
+    transition "all" (sec 0.2) ease (sec 0)
+
+    hover & do
+      backgroundColor dawnRose
+      color dawnBase
 
   ".keep-in-touch ul li a" ? do
     textDecoration none
@@ -1325,10 +1411,9 @@ fallbackStyles = do
       outline solid (px 2) dawnPine
 
   -- Fallback navigation focus indicators
-  nav ? do
-    a ? do
-      focus & do
-        outline solid (px 3) dawnPine
+  ".nav-link" ? do
+    focus & do
+      outline solid (px 3) dawnIris
 
   -- Note colors for fallback
   ".note" ? do
@@ -1379,10 +1464,27 @@ fallbackStyles = do
 
       "h2" ? do
         "a" ? do
-          color dawnLove
+          color dawnIris
+          fontWeight $ weight 600
 
           hover & do
-            color dawnRose
+            color dawnLove
+
+      ".note-tag" ? do
+        color dawnGold
+  
+  -- Also target the actual notes page structure for fallback
+  "nav[aria-label=\"List of all notes\"]" ? do
+    ".note-listing" ? do
+      "h2" ? do
+        "a" ? do
+          color dawnIris  -- Iris purple for note titles, distinct from nav
+          fontWeight $ weight 600
+          
+          hover & do
+            color dawnLove
+      ".note-tag" ? do
+        color dawnGold
 
   -- Tag cloud colors for fallback
   ".tag-cloud" ? do

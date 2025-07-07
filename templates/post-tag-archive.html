@@ -1,0 +1,22 @@
+<h1>Posts tagged with "$tag$"</h1>
+
+<div class="posts-list">
+  $for(posts)$
+  <article class="post-listing">
+    <h2><a href="$url$">$title$</a></h2>
+    $if(date)$
+    <time class="post-date" datetime="$datetime$">$date$</time>
+    $endif$ $if(tags)$
+    <div class="post-tags">$tags$</div>
+    $endif$
+  </article>
+  $endfor$
+</div>
+
+<nav class="breadcrumbs breadcrumbs-bottom" aria-label="Breadcrumb navigation">
+  <a href="../archive.html" class="breadcrumb-link">← Back to Posts</a>
+  <span class="breadcrumb-separator"> | </span>
+  <a href="../post-tags.html" class="breadcrumb-link">Browse post tags</a>
+  <span class="breadcrumb-separator"> | </span>
+  <a href="../tags.html" class="breadcrumb-link">All tags</a>
+</nav>

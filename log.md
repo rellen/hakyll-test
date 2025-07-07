@@ -231,6 +231,104 @@ body { color: light-color; background: light-bg; }
 - Skip links for keyboard navigation
 - Descriptive alt text for images
 
+## Modern CSS Architecture & Specificity Management
+
+### Problem: CSS Specificity Conflicts
+Initial implementation used broad selectors like `nav a` that caused cascade conflicts:
+- Navigation styles affected unrelated elements (note tags)
+- CSS specificity "whack-a-mole" with increasingly specific selectors
+- Difficult to maintain and debug
+
+### Solution: Specific Class-Based Architecture
+Replaced broad element-based selectors with specific classes:
+
+```haskell
+-- OLD (problematic):
+nav ? do
+  a ? do
+    color navColor
+    fontWeight bold
+
+-- NEW (clean):
+".nav-link" ? do
+  color navColor
+  fontWeight bold
+```
+
+### Implementation Steps
+1. **Added specific classes** to HTML templates:
+   ```html
+   <!-- Before -->
+   <nav><a href="/">Home</a></nav>
+   
+   <!-- After -->
+   <nav><a href="/" class="nav-link">Home</a></nav>
+   ```
+
+2. **Replaced all CSS selectors** across media queries:
+   - Main navigation styles
+   - Mobile navigation (319px and 320-639px breakpoints)
+   - Desktop navigation (640px+)
+   - Focus indicators and accessibility features
+
+3. **Eliminated cascade conflicts** between:
+   - Navigation links (`.nav-link`)
+   - Note tags (`.note-tag`) 
+   - Content links (default `a`)
+
+### Visual Hierarchy Refinement
+
+#### Color Strategy
+Implemented clear visual hierarchy using Rose Pine palette:
+
+- **H1**: Love Pink (`#b4637a` / `#eb6f92`) - Highest priority
+- **Navigation**: Iris Purple (`#907aa9` / `#c4a7e7`) - Distinct navigation identity
+- **H2**: Iris Purple (`#907aa9` / `#c4a7e7`) - Major sections  
+- **Content links**: Pine Blue (`#286983` / `#9ccfd8`) - Traditional links
+- **Note tags**: Gold (`#ea9d34` / `#f6c177`) - Distinct categorization
+- **Tag cloud**: Pine Blue (`#286983` / `#9ccfd8`) - Cohesive with content
+
+#### Navigation Color Evolution
+- **Previous**: Foam cyan (`#56949f` / `#9ccfd8`) - Too similar to content links
+- **Current**: Iris purple (`#907aa9` / `#c4a7e7`) - Sophisticated, distinctive
+- **Hover**: Love pink (`#b4637a` / `#eb6f92`) - Engaging interaction
+
+### CSS Architecture Best Practices Applied
+
+#### 1. Specific Class Names
+```haskell
+-- Avoid broad element selectors
+nav a ? styles  -- ❌ Too broad, affects unrelated elements
+
+-- Use specific classes  
+".nav-link" ? styles  -- ✅ Precise, maintainable
+".note-tag" ? styles  -- ✅ Clear separation of concerns
+```
+
+#### 2. Consistent Naming Convention
+- `.nav-link` - Navigation links
+- `.note-tag` - Note categorization tags
+- `.note-title-link` - Note title links in listings
+- Clear, semantic naming prevents confusion
+
+#### 3. Cascade Control
+- Each UI component has its own specific selectors
+- No unintended inheritance between unrelated elements
+- Easy to debug and maintain
+- Scalable for future additions
+
+### Accessibility Improvements
+- Navigation focus indicators use consistent colors
+- Clear visual hierarchy aids screen reader navigation
+- Semantic HTML maintained alongside CSS improvements
+- Keyboard navigation unaffected by specificity changes
+
+### Performance Benefits
+- Cleaner CSS with fewer override conflicts
+- More predictable rendering
+- Easier browser CSS parsing
+- Reduced redundant style calculations
+
 ## Key Takeaways
 
 1. **SVG-first approach** eliminates most favicon complexity
@@ -241,6 +339,10 @@ body { color: light-color; background: light-bg; }
 6. **Clay CSS syntax** has specific requirements that differ from standard CSS
 7. **Progressive enhancement** enables better accessibility and performance
 8. **Modern web standards** often simplify rather than complicate implementations
+9. **CSS specificity conflicts** are best solved with architectural changes, not increasing specificity
+10. **Class-based CSS architecture** scales better than element-based selectors
+11. **Visual hierarchy** through color requires careful consideration of context and purpose
+12. **Modern CSS best practices** prevent technical debt and maintenance issues
 
 ## File Structure Achieved
 

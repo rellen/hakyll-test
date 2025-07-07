@@ -5,7 +5,7 @@ import Data.Monoid (mappend)
 import Hakyll
 -- Import our custom modules
 
-import Site.Context (copyrightCtx, getNoteTags, noteCtx, postCtx, renderNoteTagCloud)
+import Site.Context (copyrightCtx, getNoteTags, getPostTags, noteCtx, postCtx, renderNoteTagCloud, renderPostTagCloud, renderCombinedTagCloud)
 import Site.Favicon (generateFaviconRules)
 import Site.Talks (loadTalks, talksContext)
 import Site.Util (applyTemplateChain)
@@ -84,32 +84,74 @@ main = do
         posts <- recentFirst =<< loadAll "posts/*"
         let archiveCtx =
               listField "posts" postCtx (return posts)
-                `mappend` constField "title" "Archives"
+                `mappend` constField "title" "Posts"
                 `mappend` siteCtx
 
         makeItem ""
           >>= applyTemplateChain [("templates/archive.html", archiveCtx), ("templates/default.html", archiveCtx)]
           >>= relativizeUrls
 
-    -- Generate tag archive pages
-    tags <- buildTagsWith getNoteTags "notes/*" (fromCapture "note-tags/*.html")
+    -- Generate tag archive pages for notes and posts
+    noteTags <- buildTagsWith getNoteTags "notes/*" (fromCapture "note-tags/*.html")
+    postTags <- buildTagsWith getPostTags "posts/*" (fromCapture "post-tags/*.html")
 
     create ["notes.html"] $ do
       route idRoute
       compile $ do
         notes <- loadAll "notes/*"
-        tagCloud <- renderNoteTagCloud 0.8 1.6 tags
         let notesArchiveCtx =
               listField "notes" noteCtx (return notes)
                 `mappend` constField "title" "Notes"
-                `mappend` constField "tagcloud" tagCloud
                 `mappend` siteCtx
 
         makeItem ""
           >>= applyTemplateChain [("templates/notes-archive.html", notesArchiveCtx), ("templates/default.html", notesArchiveCtx)]
           >>= relativizeUrls
 
-    tagsRules tags $ \tag notePattern -> do
+    -- Note tags page
+    create ["note-tags.html"] $ do
+      route idRoute
+      compile $ do
+        tagCloud <- renderNoteTagCloud 0.8 1.6 noteTags
+        let tagsPageCtx =
+              constField "title" "Browse Notes by Tag"
+                `mappend` constField "tagcloud" tagCloud
+                `mappend` siteCtx
+
+        makeItem ""
+          >>= applyTemplateChain [("templates/note-tags-page.html", tagsPageCtx), ("templates/default.html", tagsPageCtx)]
+          >>= relativizeUrls
+
+    -- Post tags page
+    create ["post-tags.html"] $ do
+      route idRoute
+      compile $ do
+        tagCloud <- renderPostTagCloud 0.8 1.6 postTags
+        let tagsPageCtx =
+              constField "title" "Browse Posts by Tag"
+                `mappend` constField "tagcloud" tagCloud
+                `mappend` siteCtx
+
+        makeItem ""
+          >>= applyTemplateChain [("templates/post-tags-page.html", tagsPageCtx), ("templates/default.html", tagsPageCtx)]
+          >>= relativizeUrls
+
+    -- Combined tags page (all content)
+    create ["tags.html"] $ do
+      route idRoute
+      compile $ do
+        tagCloud <- renderCombinedTagCloud 0.8 1.6 noteTags postTags
+        let tagsPageCtx =
+              constField "title" "Browse All Content by Tag"
+                `mappend` constField "tagcloud" tagCloud
+                `mappend` siteCtx
+
+        makeItem ""
+          >>= applyTemplateChain [("templates/all-tags-page.html", tagsPageCtx), ("templates/default.html", tagsPageCtx)]
+          >>= relativizeUrls
+
+    -- Note tag archive pages
+    tagsRules noteTags $ \tag notePattern -> do
       route idRoute
       compile $ do
         notes <- loadAll notePattern
@@ -120,13 +162,28 @@ main = do
                 `mappend` siteCtx
 
         makeItem ""
-          >>= applyTemplateChain [("templates/tag-archive.html", tagCtx), ("templates/default.html", tagCtx)]
+          >>= applyTemplateChain [("templates/note-tag-archive.html", tagCtx), ("templates/default.html", tagCtx)]
+          >>= relativizeUrls
+
+    -- Post tag archive pages
+    tagsRules postTags $ \tag postPattern -> do
+      route idRoute
+      compile $ do
+        posts <- loadAll postPattern
+        let tagCtx =
+              constField "tag" tag
+                `mappend` listField "posts" postCtx (return posts)
+                `mappend` constField "title" ("Posts tagged \"" ++ tag ++ "\"")
+                `mappend` siteCtx
+
+        makeItem ""
+          >>= applyTemplateChain [("templates/post-tag-archive.html", tagCtx), ("templates/default.html", tagCtx)]
           >>= relativizeUrls
 
     match "index.html" $ do
       route $ setExtension "html"
       compile $ do
-        posts <- recentFirst =<< loadAll "posts/*"
+        posts <- fmap (take 8) $ recentFirst =<< loadAll "posts/*"
         let indexCtx =
               listField "posts" postCtx (return posts)
                 `mappend` siteCtx
