@@ -445,9 +445,9 @@ hamburgerMenuStyle = do
     bottom nil
     transform $ rotate (deg 90)
 
-  -- Close button styles
+  -- Close button styles (hidden by default, shown in mobile)
   ".nav-close" ? do
-    display block
+    display none
     position absolute
     top $ Clay.rem 0.3
     right $ Clay.rem 0.3
@@ -514,6 +514,9 @@ mediaQuery319 = do
 
     -- Mobile menu styling
     ".nav-toggle-label" ? display flex
+
+    -- Show close button in mobile
+    ".nav-close" ? display block
 
     nav ? do
       position fixed
@@ -585,6 +588,9 @@ mediaQuery320 = do
 
     -- Mobile menu styling
     ".nav-toggle-label" ? display flex
+
+    -- Show close button in mobile
+    ".nav-close" ? display block
 
     nav ? do
       position fixed

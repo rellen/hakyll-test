@@ -13,11 +13,11 @@ import Site.Util (applyTemplateChain)
 --------------------------------------------------------------------------------
 main :: IO ()
 main = do
-  -- Get copyright years and create a context
   copyrightYearsCtx <- copyrightCtx
   let siteCtx = copyrightYearsCtx `mappend` defaultContext
 
   hakyll $ do
+
     match "images/*" $ do
       route idRoute
       compile copyFileCompiler
@@ -48,7 +48,7 @@ main = do
           >>= applyTemplateChain [("templates/page.html", siteCtx), ("templates/default.html", siteCtx)]
           >>= relativizeUrls
 
-    -- Generate talks page from JSON data
+    -- Generate talks page from Dhall data
     create ["talks.html"] $ do
       route idRoute
       compile $ do
@@ -193,4 +193,32 @@ main = do
           >>= applyTemplateChain [("templates/default.html", indexCtx)]
           >>= relativizeUrls
 
+    -- RSS Feeds
+    create ["posts.xml"] $ do
+      route idRoute
+      compile $ do
+        posts <- fmap (take 10) $ recentFirst =<< loadAll "posts/*"
+        let rssCtx = constField "description" "Technical blog post from Rob's Ramblings" 
+                   `mappend` postCtx `mappend` siteCtx
+        renderRss feedConfiguration rssCtx posts
+
+    create ["feed.xml"] $ do
+      route idRoute
+      compile $ do
+        posts <- fmap (take 10) $ recentFirst =<< loadAll "posts/*"
+        let rssCtx = constField "description" "Technical blog posts from Rob's Ramblings"
+                   `mappend` postCtx `mappend` siteCtx
+        renderRss feedConfiguration rssCtx posts
+
     match "templates/*" $ compile templateBodyCompiler
+
+--------------------------------------------------------------------------------
+-- RSS Feed Configuration
+feedConfiguration :: FeedConfiguration
+feedConfiguration = FeedConfiguration
+  { feedTitle       = "Rob's Ramblings"
+  , feedDescription = "Technical blog posts and talks on software engineering, programming, and technology"
+  , feedAuthorName  = "Robert Ellen"
+  , feedAuthorEmail = "noreply@example.com"
+  , feedRoot        = "https://robertellen.dev"
+  }
