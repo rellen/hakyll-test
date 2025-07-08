@@ -5,10 +5,13 @@ import Data.Monoid (mappend)
 import Hakyll
 import qualified Data.Text as T
 import Text.Printf (printf)
+import Text.Pandoc (def)
+import Text.Pandoc.Options (WriterOptions(..))
 -- Import our custom modules
 
 import Site.Context (copyrightCtx, getNoteTags, getPostTags, noteCtx, postCtx, renderNoteTagCloud, renderPostTagCloud, renderCombinedTagCloud)
 import Site.Favicon (generateFaviconRules)
+import Site.Pdf (generatePdfRules)
 import Site.Talks (loadTalks, talksContext, talkToItem, talkRssContext, Talk(..))
 import Site.Util (applyTemplateChain)
 
@@ -42,6 +45,9 @@ main = do
 
     -- Generate favicons from source SVG using custom compilers
     generateFaviconRules
+
+    -- Generate PDF files using custom compilers
+    generatePdfRules
 
     match (fromList ["about.md", "contact.md"]) $ do
       route $ setExtension "html"

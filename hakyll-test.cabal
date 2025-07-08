@@ -8,6 +8,7 @@ executable site
   hs-source-dirs:   ., src
   other-modules:    Site.Favicon
                   , Site.Context
+                  , Site.Pdf
                   , Site.Util
                   , Site.Talks
   build-depends:    base == 4.*
