@@ -3,11 +3,13 @@
 
 import Data.Monoid (mappend)
 import Hakyll
+import qualified Data.Text as T
+import Text.Printf (printf)
 -- Import our custom modules
 
 import Site.Context (copyrightCtx, getNoteTags, getPostTags, noteCtx, postCtx, renderNoteTagCloud, renderPostTagCloud, renderCombinedTagCloud)
 import Site.Favicon (generateFaviconRules)
-import Site.Talks (loadTalks, talksContext)
+import Site.Talks (loadTalks, talksContext, talkToItem, talkRssContext, Talk(..))
 import Site.Util (applyTemplateChain)
 
 --------------------------------------------------------------------------------
@@ -202,13 +204,28 @@ main = do
                    `mappend` postCtx `mappend` siteCtx
         renderRss feedConfiguration rssCtx posts
 
+    create ["talks.xml"] $ do
+      route idRoute
+      compile $ do
+        talks <- unsafeCompiler $ loadTalks "data/talks.dhall"
+        talkItems <- mapM talkToItem talks
+        let talkRssCtx = talkRssContext talks `mappend` siteCtx
+        renderRss feedConfiguration talkRssCtx talkItems
+
     create ["feed.xml"] $ do
       route idRoute
       compile $ do
-        posts <- fmap (take 10) $ recentFirst =<< loadAll "posts/*"
-        let rssCtx = constField "description" "Technical blog posts from Rob's Ramblings"
-                   `mappend` postCtx `mappend` siteCtx
-        renderRss feedConfiguration rssCtx posts
+        posts <- fmap (take 5) $ recentFirst =<< loadAll "posts/*"
+        talks <- unsafeCompiler $ loadTalks "data/talks.dhall"
+        talkItems <- mapM talkToItem talks
+        let allContent = posts ++ talkItems
+            combinedCtx = mconcat
+              [ postCtx
+              , talkRssContext talks
+              , constField "description" "Technical blog posts and talks from Rob's Ramblings"
+              , siteCtx
+              ]
+        renderRss feedConfiguration combinedCtx allContent
 
     match "templates/*" $ compile templateBodyCompiler
 

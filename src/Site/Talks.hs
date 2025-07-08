@@ -6,17 +6,22 @@ module Site.Talks
   ( Talk (..),
     loadTalks,
     talksContext,
+    talkToItem,
+    talkRssContext,
   )
 where
 
 import Data.Maybe (fromMaybe)
 import qualified Data.Text as T
+import qualified Data.Map as M
 import qualified Dhall
 import GHC.Generics
 import Hakyll
 import Numeric.Natural (Natural)
+import System.FilePath (takeBaseName)
 import Text.Pandoc (def, readMarkdown, runPure, writeHtml5String)
 import Text.Pandoc.Error (PandocError)
+import Text.Printf (printf)
 
 --------------------------------------------------------------------------------
 -- Talk data structure
@@ -97,3 +102,61 @@ talksContext talks = listField "talks" talkItemContext (mapM makeItem talks)
           field "hasVideo" (\item -> return $ if T.null (fromMaybe T.empty $ video $ itemBody item) then "false" else "true"),
           field "hasSlides" (\item -> return $ if T.null (fromMaybe T.empty $ slides $ itemBody item) then "false" else "true")
         ]
+
+--------------------------------------------------------------------------------
+-- Convert Talk to Item String for RSS feeds
+talkToItem :: Talk -> Compiler (Item String)
+talkToItem talk = do
+  let slug = talkSlug talk
+      identifier = fromFilePath $ "talks/" ++ slug ++ ".html"
+      body = T.unpack $ description talk
+  
+  item <- makeItem body
+  return $ item { itemIdentifier = identifier }
+
+-- Create RSS context for talk items
+talkRssContext :: [Talk] -> Context String
+talkRssContext talks = mconcat
+  [ field "title" $ \item -> do
+      let slug = takeBaseName $ toFilePath $ itemIdentifier item
+      case findTalkBySlug slug talks of
+        Just talk -> return $ T.unpack $ title talk
+        Nothing -> return "Unknown Talk"
+  , field "description" $ \item -> do
+      let slug = takeBaseName $ toFilePath $ itemIdentifier item
+      case findTalkBySlug slug talks of
+        Just talk -> return $ T.unpack $ description talk
+        Nothing -> return $ itemBody item
+  , field "published" $ \item -> do
+      let slug = takeBaseName $ toFilePath $ itemIdentifier item
+      case findTalkBySlug slug talks of
+        Just talk -> return $ printf "%04d-%02d-01T00:00:00Z" (year talk) (month talk)
+        Nothing -> return "2025-01-01T00:00:00Z"
+  , field "updated" $ \item -> do
+      let slug = takeBaseName $ toFilePath $ itemIdentifier item
+      case findTalkBySlug slug talks of
+        Just talk -> return $ printf "%04d-%02d-01T00:00:00Z" (year talk) (month talk)
+        Nothing -> return "2025-01-01T00:00:00Z"
+  , constField "author" "Robert Ellen"
+  , urlField "url"
+  ]
+
+-- Helper function to find talk by slug
+findTalkBySlug :: String -> [Talk] -> Maybe Talk
+findTalkBySlug slug talks = 
+  let expectedSlug = takeWhile (/= '.') slug  -- Remove .html extension
+  in case filter (\talk -> talkSlug talk == expectedSlug) talks of
+       (t:_) -> Just t
+       [] -> Nothing
+
+-- Generate a URL-safe slug from talk title
+talkSlug :: Talk -> String
+talkSlug talk = 
+  let titleStr = T.unpack $ title talk
+      -- Simple slug generation: lowercase, replace spaces/special chars with hyphens
+      slug = map (\c -> if c `elem` (" ,.'\"!?()[]{}/" :: String) then '-' else c) $ 
+             filter (\c -> c `notElem` ("&<>" :: String)) $
+             map toLower titleStr
+  in takeWhile (/= '\0') slug
+  where
+    toLower c = if c >= 'A' && c <= 'Z' then toEnum (fromEnum c + 32) else c
